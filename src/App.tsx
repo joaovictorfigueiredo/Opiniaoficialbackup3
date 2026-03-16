@@ -10,7 +10,8 @@ import { getDeviceFingerprint } from "./utils/device";
 import { calcularTempoRestante } from "./utils/time";
 import { NavegacaoPools } from "./components/NavegacaoPools";
 import ContadorRegressivo from "./components/ContadorRegressivo";
-import { FunctionsHttpError } from '@supabase/supabase-js'
+import { FunctionsHttpError } from '@supabase/supabase-js';
+import { Turnstile } from '@marsidev/react-turnstile';
 
 
 
@@ -90,7 +91,12 @@ const [opcoesCustom, setOpcoesCustom] = useState<string[]>(['', '']);
 const [valorTransacao, setValorTransacao] = useState('');
 const [loadingTransacao, setLoadingTransacao] = useState(false);
 const [cpfUsuario, setCpfUsuario] = useState(''); 
-const [pixCopiaCola, setPixCopiaCola] = useState<string | null>(null);
+// Substitua o seu por este:
+const [dadosPix, setDadosPix] = useState<{imagem: string, payload: string} | null>(null);
+
+//captcha de acesso
+const [captchaToken, setCaptchaToken] = useState(null);
+const [modo, setModo] = useState<'login' | 'recuperar'>('login');
 
 
 const [isModalRankingOpen, setIsModalRankingOpen] = useState(false);
@@ -317,80 +323,20 @@ const { data, error: functionError } = await supabase.functions.invoke('criar-pi
       }
       // --- FIM DO AJUSTE ---
 
-      // 4. SE TUDO DEU CERTO, ABRE A JANELA DO QR CODE ESTILIZADA
-      if (data && data.encodedImage) {
-        const qrWindow = window.open('', '_blank');
-        qrWindow?.document.write(`
-          <html>
-            <head>
-              <title>Pagamento Seguro PIX</title>
-              <meta name="viewport" content="width=device-width, initial-scale=1">
-              <style>
-                body { 
-                  display: flex; flex-direction: column; align-items: center; justify-content: center; 
-                  min-height: 100vh; font-family: sans-serif; background-color: #0f172a; margin: 0; color: #f8fafc;
-                }
-                .card { 
-                  background: #1e293b; padding: 32px; border-radius: 24px; 
-                  box-shadow: 0 20px 50px rgba(0,0,0,0.3); text-align: center; 
-                  max-width: 360px; width: 90%; border: 1px solid #334155;
-                }
-                h2 { color: #38bdf8; margin: 0 0 10px 0; font-size: 24px; }
-                p { color: #94a3b8; font-size: 14px; margin-bottom: 24px; }
-                .qr-container {
-                  background: white; padding: 12px; border-radius: 16px;
-                  display: inline-block; margin-bottom: 20px;
-                }
-                img { width: 220px; height: 220px; display: block; }
-                .code-box {
-                  background: #0f172a; padding: 12px; border-radius: 12px;
-                  border: 1px solid #334155; margin-bottom: 20px;
-                }
-                textarea {
-                  width: 100%; height: 50px; background: transparent; color: #38bdf8;
-                  border: none; font-family: monospace; font-size: 11px; resize: none; outline: none;
-                }
-                .btn-copy {
-                  background: #334155; color: white; border: none; padding: 8px 16px;
-                  border-radius: 8px; cursor: pointer; font-size: 12px; margin-top: 8px;
-                }
-                .btn-close {
-                  background: #38bdf8; color: #0f172a; border: none; padding: 14px;
-                  border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; font-size: 16px;
-                }
-              </style>
-            </head>
-            <body>
-              <div class="card">
-                <h2>Escaneie o QR Code</h2>
-                <p>O saldo será creditado automaticamente após o pagamento.</p>
-                
-                <div class="qr-container">
-                  <img src="data:image/png;base64,${data.encodedImage}" />
-                </div>
-
-                <div class="code-box">
-                  <textarea readonly id="pixPayload">${data.payload}</textarea>
-                  <button class="btn-copy" onclick="copyCode()">Copiar Código PIX</button>
-                </div>
-
-                <button class="btn-close" onclick="window.close()">Já paguei / Fechar</button>
-              </div>
-
-              <script>
-                function copyCode() {
-                  const text = document.getElementById('pixPayload');
-                  text.select();
-                  document.execCommand('copy');
-                  alert('Código copiado com sucesso!');
-                }
-              </script>
-            </body>
-          </html>
-        `);
-      } else {
-        alert("O pedido de depósito foi enviado, mas o QR Code não pôde ser gerado. Verifique seu e-mail.");
-      }
+      // 4. SE TUDO DEU CERTO, SALVA OS DADOS PARA ABRIR O MODAL INTERNO
+if (data && data.encodedImage) {
+  setDadosPix({
+    imagem: data.encodedImage,
+    payload: data.payload
+  });
+  
+  // Fecha o modal de digitar valor e limpa o loading
+  setLoadingTransacao(false);
+  setIsModalTransacaoOpen(null); 
+} else {
+  setLoadingTransacao(false);
+  alert("O pedido de depósito foi enviado, mas o QR Code não pôde ser gerado. Verifique seu painel.");
+}
       
     } else {
       // --- Lógica de Saque (Retirada) ---
@@ -531,52 +477,77 @@ const { data, error: functionError } = await supabase.functions.invoke('criar-pi
   }
 
   async function handleSignUp() {
-    if (!email || !password) return alert("Preencha e-mail e senha!");
+  if (!email || !password) return alert("Preencha e-mail e senha!");
+  if (!captchaToken) return alert("Por favor, resolva o desafio de segurança (Captcha).");
 
-    // 1. Cadastro no Auth do Supabase
-    const { data, error } = await supabase.auth.signUp({ email, password });
+  // 1. Cadastro no Auth do Supabase com Captcha
+  const { data, error } = await supabase.auth.signUp({ 
+    email, 
+    password,
+    options: { captchaToken } 
+  });
 
-    if (error) return alert("Erro no cadastro: " + error.message);
+  if (error) return alert("Erro no cadastro: " + error.message);
 
-    if (data.user) {
-      const fingerprint = getDeviceFingerprint(); // Função que gera o DNA do aparelho
+  if (data.user) {
+    const fingerprint = getDeviceFingerprint();
 
-      // 2. Criação manual do perfil vinculado ao dispositivo (Obrigatório para o Ledger)
-      await supabase.from('profiles').insert([
-        {
-          id: data.user.id,
-          email: email,
-          last_device_id: fingerprint,
-          balance: 0
-        }
-      ]);
+    // 2. Criação do perfil (Se o e-mail confirmation estiver ON, isso roda após confirmar)
+    await supabase.from('profiles').insert([
+      {
+        id: data.user.id,
+        email: email,
+        last_device_id: fingerprint,
+        balance: 0
+      }
+    ]);
 
-      alert("Cadastro realizado! Verifique seu e-mail.");
-      setUser(data.user);
-    }
+    alert("Cadastro realizado! Verifique seu e-mail.");
+    setUser(data.user);
   }
+}
 
-  async function handleLogin() {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+async function handleLogin() {
+  if (!captchaToken) return alert("Por favor, resolva o desafio de segurança (Captcha).");
 
-    if (error) return alert("Erro: " + error.message);
+  const { data, error } = await supabase.auth.signInWithPassword({ 
+    email, 
+    password,
+    options: { captchaToken }
+  });
 
-    if (data.user) {
-      const fingerprint = getDeviceFingerprint();
+  if (error) return alert("Erro: " + error.message);
 
-      // 3. ATUALIZAÇÃO CRÍTICA: Vincula o login atual ao aparelho
-      // Isso alimenta a lógica de "Em Análise" vista na image_e9ce96.png
-      await supabase
-        .from('profiles')
-        .update({
-          last_device_id: fingerprint,
-          last_login: new Date().toISOString()
-        })
-        .eq('id', data.user.id);
+  if (data.user) {
+    const fingerprint = getDeviceFingerprint();
 
-      setUser(data.user);
-    }
+    // 3. Vincula o login atual ao aparelho
+    await supabase
+      .from('profiles')
+      .update({
+        last_device_id: fingerprint,
+        last_login: new Date().toISOString()
+      })
+      .eq('id', data.user.id);
+
+    setUser(data.user);
   }
+}
+
+async function handleResetPassword() {
+  if (!email) return alert("Digite seu e-mail para receber o link de recuperação.");
+  if (!captchaToken) return alert("Resolva o captcha para solicitar a nova senha.");
+
+ const { error } = await supabase.auth.resetPasswordForEmail(email, {
+  redirectTo: 'https://opiniaoficial.com.br/atualizar-senha',
+  captchaToken: captchaToken,
+} as any);
+
+  if (error) return alert("Erro: " + error.message);
+  
+  alert("Link de recuperação enviado! Verifique sua caixa de entrada.");
+}
+
 
   async function atualizarNickname() {
     if (!tempNickname.trim() || !user) {
@@ -966,15 +937,87 @@ const { data, error: functionError } = await supabase.functions.invoke('criar-pi
       <div className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center p-6">
         <div className="max-w-md w-full bg-[#1e293b] p-8 rounded-3xl border border-gray-800 shadow-2xl">
           <h1 className="text-4xl font-black mb-8 text-center text-[#10b981]">Opinia</h1>
+          
           <div className="space-y-4">
-            <input type="email" placeholder="E-mail" className="w-full p-4 rounded-xl bg-[#0f172a] border border-gray-700 outline-none focus:border-[#10b981]" value={email} onChange={(e) => setEmail(e.target.value)} />
-            <input type="password" placeholder="Senha" className="w-full p-4 rounded-xl bg-[#0f172a] border border-gray-700 outline-none focus:border-[#10b981]" value={password} onChange={(e) => setPassword(e.target.value)} />
-            <button onClick={handleLogin} className="w-full bg-[#10b981] p-4 rounded-xl font-black text-[#0f172a] hover:opacity-90 transition-all">ENTRAR NO PAINEL</button>
-            <button onClick={handleSignUp} className="w-full border border-gray-700 p-4 rounded-xl font-black text-gray-400 hover:text-white hover:border-[#10b981] transition-all">CRIAR CONTA</button>
+            {/* O campo de e-mail é usado tanto para login quanto para recuperar */}
+            <input 
+              type="email" 
+              placeholder="E-mail" 
+              className="w-full p-4 rounded-xl bg-[#0f172a] border border-gray-700 outline-none focus:border-[#10b981]" 
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)} 
+            />
+
+            {modo === 'login' ? (
+              /* --- VISUAL DE LOGIN --- */
+              <>
+                <input 
+                  type="password" 
+                  placeholder="Senha" 
+                  className="w-full p-4 rounded-xl bg-[#0f172a] border border-gray-700 outline-none focus:border-[#10b981]" 
+                  value={password} 
+                  onChange={(e) => setPassword(e.target.value)} 
+                />
+                
+                <button 
+                  onClick={handleLogin} 
+                  className="w-full bg-[#10b981] p-4 rounded-xl font-black text-[#0f172a] hover:opacity-90 transition-all"
+                >
+                  ENTRAR NO PAINEL
+                </button>
+                
+                <button 
+                  onClick={handleSignUp} 
+                  className="w-full border border-gray-700 p-4 rounded-xl font-black text-gray-400 hover:text-white hover:border-[#10b981] transition-all"
+                >
+                  CRIAR CONTA
+                </button>
+
+                <div className="flex justify-end mt-2">
+                  <button 
+                    type="button" 
+                    onClick={() => setModo('recuperar')} 
+                    className="text-xs text-gray-400 hover:text-orange-500 transition-colors underline"
+                  >
+                    Esqueceu a senha?
+                  </button>
+                </div>
+              </>
+            ) : (
+              /* --- VISUAL DE RECUPERAÇÃO --- */
+              <>
+                <p className="text-sm text-gray-400 text-center">
+                  Digite seu e-mail acima para receber o link de recuperação.
+                </p>
+
+                <div className="flex justify-center py-2">
+                  <Turnstile 
+  siteKey="0x4AAAAAAACryFNkeF0I1cWKu" // Use esta aqui!
+  onSuccess={(token: any) => setCaptchaToken(token)} 
+  options={{ theme: 'dark' }}
+/>
+                </div>
+
+                <button 
+                  onClick={handleResetPassword} 
+                  className="w-full bg-orange-500 p-4 rounded-xl font-black text-white hover:bg-orange-600 transition-all shadow-lg shadow-orange-500/20"
+                >
+                  ENVIAR LINK DE ACESSO
+                </button>
+
+                <button 
+                  type="button"
+                  onClick={() => setModo('login')} 
+                  className="w-full border border-transparent p-2 text-sm font-bold text-gray-500 hover:text-white transition-all"
+                >
+                  ← Voltar para o login
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -1016,17 +1059,7 @@ const { data, error: functionError } = await supabase.functions.invoke('criar-pi
 
   <div><NavegacaoPools abaAtiva={abaAtiva} setAbaAtiva={setAbaAtiva} /></div>
 
-  {/* BOTÕES DE ACESSO RÁPIDO RANKING/CARTEIRA (Opcional, se quiser manter abaixo da navegação) */}
-  <div className="lg:hidden flex gap-3 overflow-x-auto no-scrollbar">
-     <button onClick={() => setIsModalRankingOpen(true)} className="flex-1 min-w-[120px] bg-[#1e293b] p-3 rounded-2xl border border-gray-800 flex items-center gap-2">
-       <span className="text-sm">🏆</span>
-       <span className="text-[10px] text-white font-black uppercase italic">Ranking</span>
-     </button>
-     <button onClick={() => setIsCarteiraMobileAberta(true)} className="flex-1 min-w-[120px] bg-[#1e293b] p-3 rounded-2xl border border-gray-800 flex items-center gap-2">
-       <span className="text-sm">💰</span>
-       <span className="text-[10px] text-[#10b981] font-black uppercase italic">Carteira</span>
-     </button>
-  </div>
+  
 
   <div className="flex gap-3 overflow-x-auto pb-4 no-scrollbar">
     <button onClick={() => setFiltroAtivo('Todos')} className={`px-6 py-2.5 rounded-full text-[11px] font-black transition-all border whitespace-nowrap ${filtroAtivo === 'Todos' ? 'bg-[#10b981] text-[#0f172a] border-[#10b981]' : 'border-gray-800 text-gray-500 hover:border-gray-600'}`}>🔥 TODOS</button>
@@ -1927,6 +1960,54 @@ const { data, error: functionError } = await supabase.functions.invoke('criar-pi
     </div>
   </div>
 )}
+
+
+{/* MODAL DE QR CODE PIX (ASAAS) */}
+{dadosPix && (
+  <div className="fixed inset-0 bg-[#0f172a]/95 backdrop-blur-xl flex items-center justify-center p-4 z-[999]">
+    <div className="bg-[#1e293b] p-6 rounded-[35px] w-full max-w-[380px] border border-gray-800 text-center shadow-2xl animate-in fade-in zoom-in duration-300">
+      
+      <h2 className="text-[#38bdf8] font-black text-2xl uppercase mb-2 italic tracking-tighter">Escaneie o PIX</h2>
+      <p className="text-[#94a3b8] text-[11px] mb-6 leading-tight">O saldo será creditado automaticamente<br/>após o pagamento.</p>
+      
+      {/* QR CODE */}
+      <div className="bg-white p-3 rounded-2xl inline-block mb-6 shadow-lg shadow-black/20">
+        <img 
+          src={`data:image/png;base64,${dadosPix.imagem}`} 
+          className="w-52 h-52 md:w-60 md:h-60 block mx-auto" 
+          alt="QR Code PIX" 
+        />
+      </div>
+
+      {/* COPIA E COLA */}
+      <div className="bg-[#0f172a] p-4 rounded-2xl border border-gray-800 mb-6">
+        <textarea 
+          readOnly 
+          className="w-full h-12 bg-transparent color-[#38bdf8] border-none font-mono text-[11px] resize-none outline-none text-center break-all text-blue-400"
+          value={dadosPix.payload}
+        />
+        <button 
+          onClick={() => {
+            navigator.clipboard.writeText(dadosPix.payload);
+            alert('Código copiado com sucesso!');
+          }}
+          className="w-full bg-gray-700/50 hover:bg-gray-700 text-white text-[10px] font-bold py-2 rounded-lg mt-2 uppercase transition-all"
+        >
+          Copiar Código PIX
+        </button>
+      </div>
+
+      {/* BOTÃO FECHAR */}
+      <button 
+        onClick={() => setDadosPix(null)}
+        className="w-full bg-[#38bdf8] hover:bg-[#0ea5e9] text-[#0f172a] font-black py-4 rounded-2xl uppercase text-base shadow-lg shadow-[#38bdf8]/20 transition-all active:scale-95"
+      >
+        Já paguei / Fechar
+      </button>
+    </div>
+  </div>
+)}
+
 
 
 
