@@ -932,98 +932,90 @@ async function handleResetPassword() {
     ? [...pools].sort((a, b) => calcularDadosPool(b).totalPote - calcularDadosPool(a).totalPote)
     : pools.filter(p => p.category === filtroAtivo)
 
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center p-6">
-        <div className="max-w-md w-full bg-[#1e293b] p-8 rounded-3xl border border-gray-800 shadow-2xl">
-          <h1 className="text-4xl font-black mb-8 text-center text-[#10b981]">Opinia</h1>
-          
-          <div className="space-y-4">
-            {/* O campo de e-mail é usado tanto para login quanto para recuperar */}
-            <input 
-              type="email" 
-              placeholder="E-mail" 
-              className="w-full p-4 rounded-xl bg-[#0f172a] border border-gray-700 outline-none focus:border-[#10b981]" 
-              value={email} 
-              onChange={(e) => setEmail(e.target.value)} 
-            />
-            <Turnstile 
+  {modo === 'login' ? (
+            /* --- VISUAL DE LOGIN --- */
+            <>
+              <input 
+                type="password" 
+                placeholder="Senha" 
+                className="w-full p-4 rounded-xl bg-[#0f172a] border border-gray-700 outline-none focus:border-[#10b981] text-white" 
+                value={password} 
+                onChange={(e) => setPassword(e.target.value)} 
+              />
+              
+              {/* Captcha para Login com container de altura mínima para evitar saltos de layout */}
+              <div className="flex justify-center my-4">
+  <Turnstile 
     siteKey="0x4AAAAAAACryFNkeF0I1cWKu"
     onSuccess={(token: any) => setCaptchaToken(token)} 
-    options={{ theme: 'dark' }}
+    options={{ 
+      theme: 'dark',
+      size: 'normal' // Força o tamanho padrão
+    }}
   />
+</div>
 
-            {modo === 'login' ? (
-              /* --- VISUAL DE LOGIN --- */
-              <>
-                <input 
-                  type="password" 
-                  placeholder="Senha" 
-                  className="w-full p-4 rounded-xl bg-[#0f172a] border border-gray-700 outline-none focus:border-[#10b981]" 
-                  value={password} 
-                  onChange={(e) => setPassword(e.target.value)} 
+              <button 
+                onClick={handleLogin} 
+                className="w-full bg-[#10b981] p-4 rounded-xl font-black text-[#0f172a] hover:opacity-90 transition-all"
+              >
+                ENTRAR NO PAINEL
+              </button>
+              
+              <button 
+                onClick={handleSignUp} 
+                className="w-full border border-gray-700 p-4 rounded-xl font-black text-gray-400 hover:text-white hover:border-[#10b981] transition-all"
+              >
+                CRIAR CONTA
+              </button>
+
+              <div className="flex justify-end mt-2">
+                <button 
+                  type="button" 
+                  onClick={() => setModo('recuperar')} 
+                  className="text-xs text-gray-400 hover:text-orange-500 transition-colors underline"
+                >
+                  Esqueceu a senha?
+                </button>
+              </div>
+            </>
+          ) : (
+            /* --- VISUAL DE RECUPERAÇÃO --- */
+            <>
+              <p className="text-sm text-gray-400 text-center mb-2">
+                Digite seu e-mail acima para receber o link de recuperação.
+              </p>
+
+              {/* Captcha para Recuperação */}
+              <div style={{ minHeight: '65px', marginBottom: '10px' }}>
+                <Turnstile 
+                  siteKey="0x4AAAAAAACryFNkeF0I1cWKu"
+                  onSuccess={(token: any) => setCaptchaToken(token)} 
+                  options={{ theme: 'dark' }}
                 />
-                
-                <button 
-                  onClick={handleLogin} 
-                  className="w-full bg-[#10b981] p-4 rounded-xl font-black text-[#0f172a] hover:opacity-90 transition-all"
-                >
-                  ENTRAR NO PAINEL
-                </button>
-                
-                <button 
-                  onClick={handleSignUp} 
-                  className="w-full border border-gray-700 p-4 rounded-xl font-black text-gray-400 hover:text-white hover:border-[#10b981] transition-all"
-                >
-                  CRIAR CONTA
-                </button>
+              </div>
 
-                <div className="flex justify-end mt-2">
-                  <button 
-                    type="button" 
-                    onClick={() => setModo('recuperar')} 
-                    className="text-xs text-gray-400 hover:text-orange-500 transition-colors underline"
-                  >
-                    Esqueceu a senha?
-                  </button>
-                </div>
-              </>
-            ) : (
-              /* --- VISUAL DE RECUPERAÇÃO --- */
-              <>
-                <p className="text-sm text-gray-400 text-center">
-                  Digite seu e-mail acima para receber o link de recuperação.
-                </p>
+              <button 
+                onClick={handleResetPassword} 
+                className="w-full bg-orange-500 p-4 rounded-xl font-black text-white hover:bg-orange-600 transition-all shadow-lg shadow-orange-500/20"
+              >
+                ENVIAR LINK DE ACESSO
+              </button>
 
-                <div className="flex justify-center py-2">
-                  <Turnstile 
-  siteKey="0x4AAAAAACryFNkeF0I1cWKu" // Use esta aqui!
-  onSuccess={(token: any) => setCaptchaToken(token)} 
-  options={{ theme: 'dark' }}
-/>
-                </div>
-
-                <button 
-                  onClick={handleResetPassword} 
-                  className="w-full bg-orange-500 p-4 rounded-xl font-black text-white hover:bg-orange-600 transition-all shadow-lg shadow-orange-500/20"
-                >
-                  ENVIAR LINK DE ACESSO
-                </button>
-
-                <button 
-                  type="button"
-                  onClick={() => setModo('login')} 
-                  className="w-full border border-transparent p-2 text-sm font-bold text-gray-500 hover:text-white transition-all"
-                >
-                  ← Voltar para o login
-                </button>
-              </>
-            )}
-          </div>
+              <button 
+                type="button"
+                onClick={() => setModo('login')} 
+                className="w-full border border-transparent p-2 text-sm font-bold text-gray-500 hover:text-white transition-all mt-2"
+              >
+                ← Voltar para o login
+              </button>
+            </>
+          )}
         </div>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
   return (
     <div className="min-h-screen bg-[#0f172a] text-white p-4 md:p-8 font-sans">
