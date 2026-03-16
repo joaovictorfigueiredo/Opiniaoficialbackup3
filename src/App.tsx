@@ -992,7 +992,7 @@ async function handleResetPassword() {
 
                 <div className="flex justify-center py-2">
                   <Turnstile 
-  siteKey="1x00000000000000000000AA" // Use esta aqui!
+  siteKey="0x4AAAAAACryFNkeF0I1cWKu" // Use esta aqui!
   onSuccess={(token: any) => setCaptchaToken(token)} 
   options={{ theme: 'dark' }}
 />
