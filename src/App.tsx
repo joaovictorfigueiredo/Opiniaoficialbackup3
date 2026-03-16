@@ -947,6 +947,11 @@ async function handleResetPassword() {
               value={email} 
               onChange={(e) => setEmail(e.target.value)} 
             />
+            <Turnstile 
+    siteKey="0x4AAAAAAACryFNkeF0I1cWKu"
+    onSuccess={(token: any) => setCaptchaToken(token)} 
+    options={{ theme: 'dark' }}
+  />
 
             {modo === 'login' ? (
               /* --- VISUAL DE LOGIN --- */
