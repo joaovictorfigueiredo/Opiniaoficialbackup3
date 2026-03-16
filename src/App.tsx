@@ -932,7 +932,23 @@ async function handleResetPassword() {
     ? [...pools].sort((a, b) => calcularDadosPool(b).totalPote - calcularDadosPool(a).totalPote)
     : pools.filter(p => p.category === filtroAtivo)
 
-  {modo === 'login' ? (
+ if (!user) {
+  return (
+    <div className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center p-6">
+      <div className="max-w-md w-full bg-[#1e293b] p-8 rounded-3xl border border-gray-800 shadow-2xl">
+        <h1 className="text-4xl font-black mb-8 text-center text-[#10b981]">Opinia</h1>
+        
+        <div className="space-y-4">
+          {/* Campo de e-mail comum a todos os modos */}
+          <input 
+            type="email" 
+            placeholder="E-mail" 
+            className="w-full p-4 rounded-xl bg-[#0f172a] border border-gray-700 outline-none focus:border-[#10b981] text-white" 
+            value={email} 
+            onChange={(e) => setEmail(e.target.value)} 
+          />
+
+          {modo === 'login' ? (
             /* --- VISUAL DE LOGIN --- */
             <>
               <input 
@@ -944,16 +960,13 @@ async function handleResetPassword() {
               />
               
               {/* Captcha para Login com container de altura mínima para evitar saltos de layout */}
-              <div className="flex justify-center my-4">
-  <Turnstile 
-    siteKey="0x4AAAAAAACryFNkeF0I1cWKu"
-    onSuccess={(token: any) => setCaptchaToken(token)} 
-    options={{ 
-      theme: 'dark',
-      size: 'normal' // Força o tamanho padrão
-    }}
-  />
-</div>
+              <div style={{ minHeight: '65px', marginTop: '10px', marginBottom: '10px' }}>
+                <Turnstile 
+                  siteKey="0x4AAAAAAACryFNkeF0I1cWKu"
+                  onSuccess={(token: any) => setCaptchaToken(token)} 
+                  options={{ theme: 'dark' }}
+                />
+              </div>
 
               <button 
                 onClick={handleLogin} 
@@ -1016,7 +1029,6 @@ async function handleResetPassword() {
     </div>
   );
 }
-
   return (
     <div className="min-h-screen bg-[#0f172a] text-white p-4 md:p-8 font-sans">
       <div className=" mx-auto flex flex-col lg:flex-row gap-10">
