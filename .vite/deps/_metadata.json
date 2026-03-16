@@ -1,0 +1,58 @@
+{
+  "hash": "efe22806",
+  "configHash": "ac96561d",
+  "lockfileHash": "c78eb89d",
+  "browserHash": "4462721c",
+  "optimized": {
+    "@fingerprintjs/fingerprintjs": {
+      "src": "../../node_modules/@fingerprintjs/fingerprintjs/dist/fp.esm.js",
+      "file": "@fingerprintjs_fingerprintjs.js",
+      "fileHash": "1247d8a6",
+      "needsInterop": false
+    },
+    "@supabase/supabase-js": {
+      "src": "../../node_modules/@supabase/supabase-js/dist/index.mjs",
+      "file": "@supabase_supabase-js.js",
+      "fileHash": "c58cf678",
+      "needsInterop": false
+    },
+    "framer-motion": {
+      "src": "../../node_modules/framer-motion/dist/es/index.mjs",
+      "file": "framer-motion.js",
+      "fileHash": "b2918b54",
+      "needsInterop": false
+    },
+    "lucide-react": {
+      "src": "../../node_modules/lucide-react/dist/esm/lucide-react.js",
+      "file": "lucide-react.js",
+      "fileHash": "9d14bf0b",
+      "needsInterop": false
+    },
+    "react": {
+      "src": "../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "9b1806b8",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "606dae66",
+      "needsInterop": true
+    },
+    "react/jsx-dev-runtime": {
+      "src": "../../node_modules/react/jsx-dev-runtime.js",
+      "file": "react_jsx-dev-runtime.js",
+      "fileHash": "31edc4b1",
+      "needsInterop": true
+    }
+  },
+  "chunks": {
+    "chunk-VX2H6PUQ": {
+      "file": "chunk-VX2H6PUQ.js"
+    },
+    "chunk-G3PMV62Z": {
+      "file": "chunk-G3PMV62Z.js"
+    }
+  }
+}
