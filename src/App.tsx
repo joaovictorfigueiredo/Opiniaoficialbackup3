@@ -962,14 +962,13 @@ async function handleResetPassword() {
               {/* Captcha para Login com container de altura mínima para evitar saltos de layout */}
              <div style={{ minHeight: '65px', marginTop: '10px', marginBottom: '10px' }} className="flex justify-center">
   <Turnstile 
-    key={modo} // Isso força o reset visual ao trocar de tela
-    siteKey="0x4AAAAAAACryFNkeF0I1cWKu"
-    onSuccess={(token: any) => setCaptchaToken(token)} 
-    options={{ 
-      theme: 'dark',
-      appearance: 'always' // ADICIONE ISSO: força o widget a sempre aparecer
-    }}
-  />
+  key={modo}
+  siteKey="0x4AAAAAACryFNkeF0I1cWKu"
+  onSuccess={(token: any) => setCaptchaToken(token)} 
+  options={{ 
+    theme: 'dark'
+  }}
+/>
 </div>
 
               <button 
@@ -1005,15 +1004,14 @@ async function handleResetPassword() {
 
               {/* Captcha para Recuperação */}
               <div style={{ minHeight: '65px', marginTop: '10px', marginBottom: '10px' }} className="flex justify-center">
-  <Turnstile 
-    key={modo} // Isso força o reset visual ao trocar de tela
-    siteKey="0x4AAAAAAACryFNkeF0I1cWKu"
-    onSuccess={(token: any) => setCaptchaToken(token)} 
-    options={{ 
-      theme: 'dark',
-      appearance: 'always' // ADICIONE ISSO: força o widget a sempre aparecer
-    }}
-  />
+   <Turnstile 
+  key={modo}
+  siteKey="0x4AAAAAACryFNkeF0I1cWKu"
+  onSuccess={(token: any) => setCaptchaToken(token)} 
+  options={{ 
+    theme: 'dark'
+  }}
+/>
 </div>
 
               <button 
