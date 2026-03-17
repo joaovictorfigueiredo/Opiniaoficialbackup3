@@ -104,18 +104,6 @@ const [modo, setModo] = useState<'login' | 'recuperar'>('login');
 
 const [isModalRankingOpen, setIsModalRankingOpen] = useState(false);
 const [isCarteiraMobileAberta, setIsCarteiraMobileAberta] = useState(false);
-const currentPath = window.location.pathname;
-
-  // ESTA DEVE SER A PRIMEIRA COISA NO RETURN
-  if (currentPath === '/atualizar-senha') {
-    return <AtualizarSenha />;
-  }
-
-  // Só depois vem a lógica de autenticação/login
-  return (
-    // ... resto do seu código
-  );
-}
 
 const [denunciaInfo, setDenunciaInfo] = useState<{aberto: boolean, poolId: string} | null>(null);
 const dispararDenuncia = (poolId: string) => {
