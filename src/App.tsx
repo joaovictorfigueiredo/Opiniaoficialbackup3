@@ -12,6 +12,7 @@ import { NavegacaoPools } from "./components/NavegacaoPools";
 import ContadorRegressivo from "./components/ContadorRegressivo";
 import { FunctionsHttpError } from '@supabase/supabase-js';
 import { Turnstile } from '@marsidev/react-turnstile';
+import AtualizarSenha from './atualizar-senha';
 
 
 
@@ -949,6 +950,12 @@ async function handleResetPassword() {
     ? [...pools].sort((a, b) => calcularDadosPool(b).totalPote - calcularDadosPool(a).totalPote)
     : pools.filter(p => p.category === filtroAtivo)
 
+  const currentPath = window.location.pathname;
+
+  if (currentPath === '/atualizar-senha') {
+    return <AtualizarSenha />;
+  }
+  
  if (!user) {
   return (
     <div className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center p-6">
