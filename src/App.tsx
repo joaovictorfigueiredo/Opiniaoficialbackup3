@@ -13,7 +13,7 @@ import ContadorRegressivo from "./components/ContadorRegressivo";
 import { FunctionsHttpError } from '@supabase/supabase-js';
 import { Turnstile } from '@marsidev/react-turnstile';
 import AtualizarSenha from './atualizar-senha';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 
 
 
@@ -953,6 +953,11 @@ async function handleResetPassword() {
     ? [...pools].sort((a, b) => calcularDadosPool(b).totalPote - calcularDadosPool(a).totalPote)
     : pools.filter(p => p.category === filtroAtivo)
 
+  
+if (window.location.pathname.includes('/atualizar-senha')) {
+  return <AtualizarSenha />;
+}
+  
 
  if (!user) {
   return (
