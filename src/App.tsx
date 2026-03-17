@@ -113,6 +113,8 @@ const dispararDenuncia = (poolId: string) => {
 };
 const [textoDenuncia, setTextoDenuncia] = useState('');
 
+  const currentPath = window.location.pathname;
+
   // Isso vai fazer o React "acordar" a cada segundo e re-checar os botões
   useEffect(() => {
     const interval = setInterval(() => setAgora(new Date()), 1000);
@@ -949,6 +951,16 @@ async function handleResetPassword() {
 
  if (!user) {
   return (
+    // ESTA DEVE SER A PRIMEIRA COISA NO RETURN
+  if (currentPath === '/atualizar-senha') {
+    return <AtualizarSenha />;
+  }
+
+  // Só depois vem a lógica de autenticação/login
+  return (
+    // ... resto do seu código
+  );
+}
     <div className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center p-6">
       <div className="max-w-md w-full bg-[#1e293b] p-8 rounded-3xl border border-gray-800 shadow-2xl">
         <h1 className="text-4xl font-black mb-8 text-center text-[#10b981]">Opinia</h1>
