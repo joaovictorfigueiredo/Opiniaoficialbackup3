@@ -339,9 +339,9 @@ const { data, error: functionError } = await supabase.functions.invoke('criar-pi
         if (functionError instanceof FunctionsHttpError) {
           const errorContext = await functionError.context.json();
           console.error('Erro detalhado do Asaas:', errorContext);
-          alert(`O Asaas recusou: ${JSON.stringify(errorContext)}`);
+          toast.error(`O Asaas recusou: ${JSON.stringify(errorContext)}`);
         } else {
-          alert(`Erro na comunicação: ${functionError.message}`);
+          toast.error(`Erro na comunicação: ${functionError.message}`);
         }
         setLoadingTransacao(false);
         return; // Para a execução aqui se deu erro
@@ -360,7 +360,7 @@ if (data && data.encodedImage) {
   setIsModalTransacaoOpen(null); 
 } else {
   setLoadingTransacao(false);
-  alert("O pedido de depósito foi enviado, mas o QR Code não pôde ser gerado. Verifique seu painel.");
+  toast.error("O pedido de depósito foi enviado, mas o QR Code não pôde ser gerado. Verifique seu painel.");
 }
       
     } else {
@@ -369,7 +369,7 @@ if (data && data.encodedImage) {
 
     // 1. Validação de valor mínimo
     if (valor < 30) {
-      alert("O valor mínimo para retirada é R$ 30,00");
+      toast.error("O valor mínimo para retirada é R$ 30,00");
       setLoadingTransacao(false);
       return;
     }
