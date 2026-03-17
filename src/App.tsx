@@ -27,6 +27,18 @@ type AbaType = 'explorar' | 'minhas_apostas' | 'criadas_por_mim';
 
 
 function App() {
+  const currentPath = window.location.pathname;
+
+  // ESTA DEVE SER A PRIMEIRA COISA NO RETURN
+  if (currentPath === '/atualizar-senha') {
+    return <AtualizarSenha />;
+  }
+
+  // Só depois vem a lógica de autenticação/login
+  return (
+    // ... resto do seu código
+  );
+}
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState<any>(null)
