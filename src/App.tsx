@@ -32,6 +32,11 @@ type AbaType = 'explorar' | 'minhas_apostas' | 'criadas_por_mim';
 
 function App() {
 const isResetPage = window.location.pathname.includes('/atualizar-senha');
+
+  // 🔥 BLOQUEIA TUDO
+  if (isResetPage) {
+    return <AtualizarSenha />;
+  }
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState<any>(null)
@@ -133,16 +138,6 @@ const handleVerPoolsAtivas = (id: string, nick: string) => {
   // Aqui você usa o nome novo do estado
   setUsuarioDestaque({ id, nickname: nick });
 }
-
-
-  
-
-
-  // 🔥 PRIORIDADE MÁXIMA
-  if (isResetPage) {
-    return <ResetPassword />;
-  }
-
 
   // Escuta mudanças na URL (útil se você navegar internamente)
   useEffect(() => {
