@@ -13,7 +13,7 @@ import ContadorRegressivo from "./components/ContadorRegressivo";
 import { FunctionsHttpError } from '@supabase/supabase-js';
 import { Turnstile } from '@marsidev/react-turnstile';
 import AtualizarSenha from './atualizar-senha';
-
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 
 
