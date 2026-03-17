@@ -1,12 +1,5 @@
 {
-  "rewrites": [
-    {
-      "source": "/atualizar-senha",
-      "destination": "/"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/"
-    }
+  "routes": [
+    { "src": "/(.*)", "dest": "/" }
   ]
 }
