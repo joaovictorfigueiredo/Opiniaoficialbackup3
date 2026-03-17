@@ -953,11 +953,7 @@ async function handleResetPassword() {
     ? [...pools].sort((a, b) => calcularDadosPool(b).totalPote - calcularDadosPool(a).totalPote)
     : pools.filter(p => p.category === filtroAtivo)
 
-if (currentPath === '/atualizar-senha') {
-  return <AtualizarSenha />;
-}
 
-  
  if (!user) {
   return (
     <div className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center p-6">
