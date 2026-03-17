@@ -295,11 +295,11 @@ useEffect(() => {
 const gerenciarSaldoReal = async () => {
   // 1. Validações Iniciais
   if (!valorTransacao || Number(valorTransacao) <= 0) {
-    return alert("Insira um valor válido");
+    return toast.error("Insira um valor válido");
   }
   
   if (isModalTransacaoOpen === 'deposito' && (!cpfUsuario || cpfUsuario.length < 11)) {
-    return alert("Por favor, insira um CPF válido para continuar.");
+    return toast.error("Por favor, insira um CPF válido para continuar.");
   }
 
   setLoadingTransacao(true);
