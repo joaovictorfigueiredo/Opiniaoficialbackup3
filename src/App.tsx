@@ -30,7 +30,6 @@ type AbaType = 'explorar' | 'minhas_apostas' | 'criadas_por_mim';
 
 
 function App() {
-  const isResetPage = window.location.pathname.includes('/atualizar-senha');
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
