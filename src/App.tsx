@@ -12,7 +12,7 @@ import { NavegacaoPools } from "./components/NavegacaoPools";
 import ContadorRegressivo from "./components/ContadorRegressivo";
 import { FunctionsHttpError } from '@supabase/supabase-js';
 import { Turnstile } from '@marsidev/react-turnstile';
-import AtualizarSenha from './atualizar-senha';
+
 
 
 
@@ -287,19 +287,7 @@ useEffect(() => {
     '⚽ Esportes', '🎮 Games', '🗳️ Política', '📺 Entretenimento',
     '📱 Internet', '💰 Economia', '🚀 Lançamentos', '⚙️ Geral'
   ]
-
-
-
-
-if (window.location.pathname.includes('/atualizar-senha')) {
-  return <AtualizarSenha />;
-}
-
-
-
-
-
-  
+ 
 
 const gerenciarSaldoReal = async () => {
   // 1. Validações Iniciais
