@@ -2,7 +2,15 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 serve(async (req) => {
-  // Use o nome padrão do Supabase
+  // 1. VERIFICAÇÃO DO TOKEN (A chave que você criou: @Un1v3rs0)
+  const asaasToken = req.headers.get("asaas-access-token");
+  const secretToken = Deno.env.get('ASAAS_WEBHOOK_TOKEN'); // O valor que você salvou no Secrets
+
+  if (asaasToken !== secretToken) {
+    console.error("Token inválido recebido!");
+    return new Response("Unauthorized", { status: 401 }); // Aqui barramos quem não tem a senha
+  }
+
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL') ?? '',
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '' 
@@ -10,41 +18,42 @@ serve(async (req) => {
 
   try {
     const body = await req.json()
-    console.log("Recebido do Asaas:", body.event)
+    console.log("Evento recebido:", body.event)
 
-    // Ajuste: O Asaas envia PAYMENT_CONFIRMED para PIX
+    // O Asaas envia os dados dentro de 'payment', mas o evento principal é PAYMENT_RECEIVED
     if (body.event === 'PAYMENT_RECEIVED' || body.event === 'PAYMENT_CONFIRMED') {
-      const userId = body.payment.externalReference
-      const amount = body.payment.value
+      const paymentData = body.payment;
+      const userId = paymentData.externalReference;
+      const amount = paymentData.value;
 
-      // 1. Atualiza o saldo via RPC
+      console.log(`Processando depósito de R$ ${amount} para o user ${userId}`);
+
+      // 2. Atualiza o saldo via RPC
       const { error: rpcError } = await supabase.rpc('increment_wallet_balance', { 
         user_id_param: userId, 
         amount_param: amount 
       })
       
       if (rpcError) {
-        console.error("Erro no RPC:", rpcError.message)
-        // Retornamos 200 para o Asaas não ficar tentando enviar de novo um erro de código
-        return new Response("Erro no Banco", { status: 200 })
+        console.error("Erro no RPC:", rpcError.message);
+        return new Response("Erro no Banco", { status: 200 });
       }
 
-      // 2. Registra a transação
+      // 3. Registra a transação
       await supabase.from('transactions').insert({
         user_id: userId,
         amount: amount,
         type: 'deposit',
         status: 'completed',
-        description: 'Depósito PIX Asaas Confirmado'
-      })
+        description: 'Depósito PIX Asaas'
+      });
+
+      console.log("Saldo atualizado com sucesso!");
     }
 
-    return new Response(JSON.stringify({ received: true }), { 
-      status: 200,
-      headers: { "Content-Type": "application/json" }
-    })
+    return new Response(JSON.stringify({ success: true }), { status: 200 });
   } catch (err) {
-    console.error("Erro fatal no Webhook:", err.message)
-    return new Response(err.message, { status: 200 }) // Sempre retorne 200 para evitar fila de retentativas no Asaas
+    console.error("Erro no processamento:", err.message);
+    return new Response("Ok", { status: 200 });
   }
 })
