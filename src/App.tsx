@@ -12,6 +12,7 @@ import { NavegacaoPools } from "./components/NavegacaoPools";
 import ContadorRegressivo from "./components/ContadorRegressivo";
 import { FunctionsHttpError } from '@supabase/supabase-js';
 import { Turnstile } from '@marsidev/react-turnstile';
+import AtualizarSenha from './atualizar-senha';
 
 
 
@@ -28,6 +29,7 @@ type AbaType = 'explorar' | 'minhas_apostas' | 'criadas_por_mim';
 
 
 function App() {
+  const currentPath = window.location.pathname;
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState<any>(null)
@@ -949,7 +951,11 @@ async function handleResetPassword() {
   const poolsFiltradas = filtroAtivo === 'Todos'
     ? [...pools].sort((a, b) => calcularDadosPool(b).totalPote - calcularDadosPool(a).totalPote)
     : pools.filter(p => p.category === filtroAtivo)
-
+  
+if (currentPath === '/atualizar-senha') {
+  return <AtualizarSenha />;
+}
+  
  if (!user) {
   return (
     <div className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center p-6">
