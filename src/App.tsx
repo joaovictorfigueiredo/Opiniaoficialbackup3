@@ -963,7 +963,7 @@ async function handleResetPassword() {
              <div style={{ minHeight: '65px', marginTop: '10px', marginBottom: '10px' }} className="flex justify-center">
   <Turnstile 
   key={modo}
-  siteKey="0x4AAAAAACryFPplMfwIWVfFVf3tLwKjo7E"
+  siteKey="0x4AAAAAACryFNkeF0I1cWKu"
   onSuccess={(token: any) => setCaptchaToken(token)} 
   options={{ 
     theme: 'dark'
@@ -1006,7 +1006,7 @@ async function handleResetPassword() {
               <div style={{ minHeight: '65px', marginTop: '10px', marginBottom: '10px' }} className="flex justify-center">
    <Turnstile 
   key={modo}
-  siteKey="0x4AAAAAACryFPplMfwIWVfFVf3tLwKjo7E"
+  siteKey="0x4AAAAAACryFNkeF0I1cWKu"
   onSuccess={(token: any) => setCaptchaToken(token)} 
   options={{ 
     theme: 'dark'
