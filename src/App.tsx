@@ -39,7 +39,9 @@ function App() {
   const [tema, setTema] = useState('⚽ Esportes')
   const [pools, setPools] = useState<any[]>([])
   const [filtroAtivo, setFiltroAtivo] = useState('Todos')
-
+// 2. Dentro da função App(), verifique a URL atual
+const [rotaAtual, setRotaAtual] = useState(window.location.pathname);
+  
 const [chavePix, setChavePix] = useState('');
 const [tipoChavePix, setTipoChavePix] = useState('CPF');
 
@@ -125,6 +127,19 @@ const handleVerPoolsAtivas = (id: string, nick: string) => {
   // Aqui você usa o nome novo do estado
   setUsuarioDestaque({ id, nickname: nick });
 }
+
+
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
+
+  // Escuta mudanças na URL (útil se você navegar internamente)
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setCurrentPath(window.location.pathname);
+    };
+
+    window.addEventListener('popstate', handleLocationChange);
+    return () => window.removeEventListener('popstate', handleLocationChange);
+  }, []);
 
 // Este é o "Gatilho"
 useEffect(() => {
@@ -2024,6 +2039,22 @@ async function handleResetPassword() {
   </div>
 )}
 
+<div className="min-h-screen bg-[#0b121f] text-white font-sans selection:bg-[#10b981]/30">
+    
+    {/* SE A ROTA FOR ATUALIZAR SENHA, MOSTRA SÓ ELA */}
+    {currentPath === '/atualizar-senha' ? (
+      <ResetPassword />
+    ) : (
+      /* CASO CONTRÁRIO, MOSTRA TODO O SEU SITE ATUAL */
+      <>
+        {/* Aqui vai o seu Header, Sidebar, Listagem de Pools, etc. */}
+        <div className="max-w-[1400px] mx-auto p-4 lg:p-10">
+           {/* ... todo o código que você me mandou acima ... */}
+        </div>
+      </>
+    )}
+
+  </div>
 
 
 
