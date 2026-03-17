@@ -30,7 +30,8 @@ type AbaType = 'explorar' | 'minhas_apostas' | 'criadas_por_mim';
 
 
 function App() {
-  const currentPath = window.location.pathname;
+  const isResetPage = window.location.pathname.includes('/atualizar-senha');
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState<any>(null)
@@ -287,6 +288,18 @@ useEffect(() => {
     '📱 Internet', '💰 Economia', '🚀 Lançamentos', '⚙️ Geral'
   ]
 
+
+
+
+if (window.location.pathname.includes('/atualizar-senha')) {
+  return <AtualizarSenha />;
+}
+
+
+
+
+
+  
 
 const gerenciarSaldoReal = async () => {
   // 1. Validações Iniciais
@@ -954,11 +967,6 @@ async function handleResetPassword() {
     : pools.filter(p => p.category === filtroAtivo)
 
   
-if (window.location.pathname.includes('/atualizar-senha')) {
-  return <AtualizarSenha />;
-}
-  
-
  if (!user) {
   return (
     <div className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center p-6">
