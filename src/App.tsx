@@ -807,7 +807,13 @@ async function handleResetPassword() {
     if (!user?.id || isNaN(valor) || valor <= 0) {
         return alert("Por favor, insira um valor válido para apostar.");
     }
-
+// --- INCREMENTO DE REGRAS DE SEGURANÇA ---
+    
+    // REGRA A: O Criador não pode apostar na própria pool
+    if (user.id === selectedPool?.user_id) {
+        return alert("Você não pode apostar em uma pool criada por você.");
+    }
+    
     setIsActionLoading(true);
 
     try {
