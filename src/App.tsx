@@ -12,7 +12,7 @@ import { NavegacaoPools } from "./components/NavegacaoPools";
 import ContadorRegressivo from "./components/ContadorRegressivo";
 import { FunctionsHttpError } from '@supabase/supabase-js';
 import { Turnstile } from '@marsidev/react-turnstile';
-import AtualizarSenha from './atualizar-senha';
+
 
 
 
@@ -113,7 +113,7 @@ const dispararDenuncia = (poolId: string) => {
 };
 const [textoDenuncia, setTextoDenuncia] = useState('');
 
-  const currentPath = window.location.pathname;
+
 
   // Isso vai fazer o React "acordar" a cada segundo e re-checar os botões
   useEffect(() => {
