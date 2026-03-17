@@ -376,7 +376,7 @@ if (data && data.encodedImage) {
 
     // 2. Validação de campos PIX (Certifique-se de ter esses states)
     if (!chavePix || !tipoChavePix) {
-      alert("Por favor, preencha a chave PIX e o tipo da chave.");
+      toast.error("Por favor, preencha a chave PIX e o tipo da chave.");
       setLoadingTransacao(false);
       return;
     }
@@ -398,16 +398,16 @@ if (data && data.encodedImage) {
       try {
         const errorDetail = await saqueError.context?.json();
         console.error("Erro detalhado do Asaas:", errorDetail);
-        alert(`Falha no Saque: ${errorDetail?.error || "Verifique os dados ou saldo."}`);
+        toast.error(`Falha no Saque: ${errorDetail?.error || "Verifique os dados ou saldo."}`);
       } catch (e) {
         // Caso não consiga ler o JSON, mostra a mensagem padrão
-        alert(`Erro na transação: ${saqueError.message}`);
+        toast.error(`Erro na transação: ${saqueError.message}`);
       }
       setLoadingTransacao(false);
       return; // Interrompe a execução para não mostrar o alerta de sucesso
     }
 
-    alert("Saque realizado com sucesso! O valor cairá na sua conta em breve.");
+   toast.success("Saque realizado com sucesso! O valor cairá na sua conta em breve.");
     
     // Atualiza o perfil para mostrar o saldo novo na tela
     if (typeof buscarPerfil === 'function') buscarPerfil(perfil.id);
@@ -419,7 +419,7 @@ if (data && data.encodedImage) {
 
   } catch (err: any) {
     console.error("Erro completo na transação:", err);
-    alert("Erro na transação: " + (err.message || "Erro desconhecido"));
+    toast.error("Erro na transação: " + (err.message || "Erro desconhecido"));
   } finally {
     setLoadingTransacao(false);
   }
@@ -502,8 +502,8 @@ if (data && data.encodedImage) {
   }
 
   async function handleSignUp() {
-  if (!email || !password) return alert("Preencha e-mail e senha!");
-  if (!captchaToken) return alert("Por favor, resolva o desafio de segurança (Captcha).");
+  if (!email || !password) return toast.error("Preencha e-mail e senha!");
+  if (!captchaToken) return toast.error("Por favor, resolva o desafio de segurança (Captcha).");
 
   // 1. Cadastro no Auth do Supabase com Captcha
   const { data, error } = await supabase.auth.signUp({ 
@@ -512,7 +512,7 @@ if (data && data.encodedImage) {
     options: { captchaToken } 
   });
 
-  if (error) return alert("Erro no cadastro: " + error.message);
+  if (error) return toast.success("Erro no cadastro: " + error.message);
 
   if (data.user) {
     const fingerprint = getDeviceFingerprint();
@@ -527,13 +527,13 @@ if (data && data.encodedImage) {
       }
     ]);
 
-    alert("Cadastro realizado! Verifique seu e-mail.");
+    toast.success("Cadastro realizado! Verifique seu e-mail.");
     setUser(data.user);
   }
 }
 
 async function handleLogin() {
-  if (!captchaToken) return alert("Por favor, resolva o desafio de segurança (Captcha).");
+  if (!captchaToken) return toast.error("Por favor, resolva o desafio de segurança (Captcha).");
 
   const { data, error } = await supabase.auth.signInWithPassword({ 
     email, 
@@ -541,7 +541,7 @@ async function handleLogin() {
     options: { captchaToken }
   });
 
-  if (error) return alert("Erro: " + error.message);
+  if (error) return toast.error("Erro: " + error.message);
 
   if (data.user) {
     const fingerprint = getDeviceFingerprint();
@@ -560,17 +560,17 @@ async function handleLogin() {
 }
 
 async function handleResetPassword() {
-  if (!email) return alert("Digite seu e-mail para receber o link de recuperação.");
-  if (!captchaToken) return alert("Resolva o captcha para solicitar a nova senha.");
+  if (!email) return toast.error("Digite seu e-mail para receber o link de recuperação.");
+  if (!captchaToken) return toast.error("Resolva o captcha para solicitar a nova senha.");
 
  const { error } = await supabase.auth.resetPasswordForEmail(email, {
   redirectTo: 'https://opiniaoficial.com.br/atualizar-senha',
   captchaToken: captchaToken,
 } as any);
 
-  if (error) return alert("Erro: " + error.message);
+  if (error) return toast.error("Erro: " + error.message);
   
-  alert("Link de recuperação enviado! Verifique sua caixa de entrada.");
+  toast.success("Link de recuperação enviado! Verifique sua caixa de entrada.");
 }
 
 
@@ -581,8 +581,8 @@ async function handleResetPassword() {
     }
     const { error } = await supabase.from('profiles').update({ nickname: tempNickname }).eq('id', user.id);
     if (error) {
-      if (error.code === '23505') alert("Este nickname já está em uso. Tente outro!");
-      else alert("Erro ao salvar: " + error.message);
+      if (error.code === '23505') toast.error("Este nickname já está em uso. Tente outro!");
+      else toast.error("Erro ao salvar: " + error.message);
     } else {
       setPerfil({ ...perfil, nickname: tempNickname });
       setIsEditingNickname(false);
@@ -670,7 +670,7 @@ async function handleResetPassword() {
 }
   async function gerenciarSaldo() {
     const valor = parseFloat(valorTransacao);
-    if (isNaN(valor) || valor <= 0) return alert("Valor inválido");
+    if (isNaN(valor) || valor <= 0) return toast.error("Valor inválido");
 
     // 1. Ativa o bloqueio (isActionLoading vira true)
     setIsActionLoading(true);
@@ -681,7 +681,7 @@ async function handleResetPassword() {
         novoSaldo += valor;
       } else {
         if (valor > novoSaldo) {
-          alert("Saldo insuficiente para saque!");
+          toast.error("Saldo insuficiente para saque!");
           // O finally vai rodar e liberar o botão automaticamente
           return;
         }
@@ -701,7 +701,7 @@ async function handleResetPassword() {
       buscarPerfil(user.id);
 
     } catch (error: any) {
-      alert("Erro na transação: " + error.message);
+      toast.error("Erro na transação: " + error.message);
     } finally {
       // 2. Libera o botão (isActionLoading vira false)
       // Isso roda mesmo se der erro ou se der sucesso!
@@ -806,13 +806,13 @@ async function handleResetPassword() {
     
     // 1. Validação Básica Inicial
     if (!user?.id || isNaN(valor) || valor <= 0) {
-        return alert("Por favor, insira um valor válido para apostar.");
+        return toast.error("Por favor, insira um valor válido para apostar.");
     }
 // --- INCREMENTO DE REGRAS DE SEGURANÇA ---
     
     // REGRA A: O Criador não pode apostar na própria pool
     if (user.id === selectedPool?.user_id) {
-        return alert("Você não pode apostar em uma pool criada por você.");
+        return toast.error("Você não pode apostar em uma pool criada por você.");
     }
     
     setIsActionLoading(true);
@@ -852,7 +852,7 @@ async function handleResetPassword() {
         // 5. Sucesso: Fecha modal e limpa campos
         setIsModalOpen(false);
         setValorAposta('');
-        alert("Aposta realizada com sucesso!");
+        toast.success("Aposta realizada com sucesso!");
 
         // 6. Atualização Global
         await Promise.all([
@@ -866,7 +866,7 @@ async function handleResetPassword() {
     
     // Tratamento seguro para pegar a mensagem
     const mensagemErro = error instanceof Error ? error.message : "Erro desconhecido";
-    alert("Erro ao processar: " + mensagemErro);
+    toast.error("Erro ao processar: " + mensagemErro);
 } finally {
         setIsActionLoading(false);
     }
@@ -926,7 +926,7 @@ async function handleResetPassword() {
    } catch (error: any) {
   console.error("Erro no encerramento:", error);
   // Se aparecer "new row violates row-level security", é o RLS!
-  alert("Erro ao fechar: " + (error.details || error.message)); 
+  toast.error("Erro ao fechar: " + (error.details || error.message)); 
 }
   }
 
@@ -938,7 +938,7 @@ async function handleResetPassword() {
 
       if (error) throw error;
 
-      alert("Contestação enviada! O prazo de liberação foi estendido para 3 horas para análise.");
+      toast.success("Contestação enviada! O prazo de liberação foi estendido para 3 horas para análise.");
     } catch (error) {
       console.error("Erro ao contestar:", error);
     }
@@ -1854,7 +1854,7 @@ async function handleResetPassword() {
         {/* BOTÃO DE CONFIRMAÇÃO (QUE ESTAVA FALTANDO) */}
         <button 
           onClick={async () => {
-            if (textoDenuncia.length < 10) return alert("Descreva melhor o motivo.");
+            if (textoDenuncia.length < 10) return toast.error("Descreva melhor o motivo.");
 
             try {
               // 1. Registra a denúncia na tabela de log
@@ -1882,7 +1882,7 @@ async function handleResetPassword() {
               buscarPools();
             } catch (err) {
               console.error(err);
-              alert("Erro ao enviar denúncia.");
+              toast.error("Erro ao enviar denúncia.");
             }
           }}
           className="w-full bg-red-500 p-4 rounded-2xl font-black text-[#0f172a] text-[10px] uppercase hover:opacity-90 transition-all shadow-[0_0_20px_rgba(239,68,68,0.2)]"
@@ -2040,7 +2040,7 @@ async function handleResetPassword() {
         <button 
           onClick={() => {
             navigator.clipboard.writeText(dadosPix.payload);
-            alert('Código copiado com sucesso!');
+            toast.success('Código copiado com sucesso!');
           }}
           className="w-full bg-gray-700/50 hover:bg-gray-700 text-white text-[10px] font-bold py-2 rounded-lg mt-2 uppercase transition-all"
         >
