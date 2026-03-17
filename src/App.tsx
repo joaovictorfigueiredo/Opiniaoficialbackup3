@@ -12,6 +12,7 @@ import { NavegacaoPools } from "./components/NavegacaoPools";
 import ContadorRegressivo from "./components/ContadorRegressivo";
 import { FunctionsHttpError } from '@supabase/supabase-js';
 import { Turnstile } from '@marsidev/react-turnstile';
+import AtualizarSenha from './atualizar-senha';
 
 
 
@@ -30,7 +31,7 @@ type AbaType = 'explorar' | 'minhas_apostas' | 'criadas_por_mim';
 
 
 function App() {
-
+const isResetPage = window.location.pathname.includes('/atualizar-senha');
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState<any>(null)
@@ -134,7 +135,14 @@ const handleVerPoolsAtivas = (id: string, nick: string) => {
 }
 
 
-  const [currentPath, setCurrentPath] = useState(window.location.pathname);
+  
+
+
+  // 🔥 PRIORIDADE MÁXIMA
+  if (isResetPage) {
+    return <ResetPassword />;
+  }
+
 
   // Escuta mudanças na URL (útil se você navegar internamente)
   useEffect(() => {
@@ -953,6 +961,10 @@ async function handleResetPassword() {
     ? [...pools].sort((a, b) => calcularDadosPool(b).totalPote - calcularDadosPool(a).totalPote)
     : pools.filter(p => p.category === filtroAtivo)
 
+
+
+
+  
   
  if (!user) {
   return (
@@ -2044,24 +2056,6 @@ async function handleResetPassword() {
     </div>
   </div>
 )}
-
-<div className="min-h-screen bg-[#0b121f] text-white font-sans selection:bg-[#10b981]/30">
-    
-    {/* SE A ROTA FOR ATUALIZAR SENHA, MOSTRA SÓ ELA */}
-    {currentPath === '/atualizar-senha' ? (
-      <ResetPassword />
-    ) : (
-      /* CASO CONTRÁRIO, MOSTRA TODO O SEU SITE ATUAL */
-      <>
-        {/* Aqui vai o seu Header, Sidebar, Listagem de Pools, etc. */}
-        <div className="max-w-[1400px] mx-auto p-4 lg:p-10">
-           {/* ... todo o código que você me mandou acima ... */}
-        </div>
-      </>
-    )}
-
-  </div>
-
 
 
     </div>
