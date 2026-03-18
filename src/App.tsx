@@ -1295,6 +1295,8 @@ async function handleResetPassword() {
           {(pool.profiles?.nickname || 'U').substring(0, 2).toUpperCase()}
         </div>
 
+        
+
         {/* INFO DO CRIADOR, DENÚNCIA E ID */}
 <div className="flex flex-col">
   <p className="text-[10px] text-gray-500 font-bold uppercase">
@@ -1316,7 +1318,7 @@ async function handleResetPassword() {
 
     <button 
   onClick={() => {
-    const link = `${window.location.origin}/${selectedPool.slug}`;
+    const link = `${window.location.origin}/${Pool.slug}`;
     navigator.clipboard.writeText(link);
     alert("Link da aposta copiado! Mande nos grupos de WhatsApp 🚀");
   }}
