@@ -1289,24 +1289,7 @@ async function handleResetPassword() {
           {(pool.profiles?.nickname || 'U').substring(0, 2).toUpperCase()}
         </div>
 
-        {/* INFO DO CRIADOR, DENÚNCIA E COMPARTILHAMENTO */}
-        <div className="flex flex-col flex-1">
-          <p className="text-[10px] text-gray-500 font-bold uppercase">
-            @{pool.profiles?.nickname || 'usuario'}
-          </p>
-          
-          <div className="flex items-center gap-3 mt-0.5">
-            <button 
-              onClick={(e) => {
-                e.stopPropagation();
-                navigator.clipboard.writeText(pool.id);
-                setDenunciaInfo({ aberto: true, poolId: pool.id });
-              }}
-              className="relative z-10 flex items-center gap-1 text-[8px] font-black text-gray-700 hover:text-red-500 transition-all uppercase tracking-tighter cursor-pointer"
-            >
-              <span className="w-1 h-1 bg-red-500/30 rounded-full"></span>
-              Denunciar
-            </button>
+       
 
             {/* BOTÃO DE COMPARTILHAR CORRIGIDO */}
             <button 
