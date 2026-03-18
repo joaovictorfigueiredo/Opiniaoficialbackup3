@@ -1109,8 +1109,21 @@ async function handleResetPassword() {
   return (
     <div className="min-h-screen bg-[#0f172a] text-white p-4 md:p-8 font-sans">
       <div className=" mx-auto flex flex-col lg:flex-row gap-10">
+        
 
-        {/* 🔍 BUSCA DE USUÁRIOS */}
+        {/* 1. COLUNA ESQUERDA (RANKING) */}
+        <aside className="hidden lg:block w-[280px]">
+          <RankingSide ranking={ranking} />
+        </aside>
+
+        {/* COLUNA PRINCIPAL */}
+<div className="flex-1 space-y-10">
+  <div className="flex justify-between items-center">
+    <h1 className="text-3xl font-black text-[#10b981] italic tracking-tighter uppercase">OPINIA.</h1>
+
+
+
+{/* 🔍 BUSCA DE USUÁRIOS */}
     <div className="p-4">
       <input
         type="text"
@@ -1142,17 +1155,9 @@ async function handleResetPassword() {
   ))}
 </div>
 
-        
 
-        {/* 1. COLUNA ESQUERDA (RANKING) */}
-        <aside className="hidden lg:block w-[280px]">
-          <RankingSide ranking={ranking} />
-        </aside>
 
-        {/* COLUNA PRINCIPAL */}
-<div className="flex-1 space-y-10">
-  <div className="flex justify-between items-center">
-    <h1 className="text-3xl font-black text-[#10b981] italic tracking-tighter uppercase">OPINIA.</h1>
+    
     
     <div className="flex items-center gap-2">
       {/* NOVO: BOTÃO DE PERFIL/CARTEIRA RÁPIDO (SÓ APARECE NO CELULAR) */}
