@@ -115,3 +115,10 @@ html, body {
 .forgot-password:hover {
   filter: brightness(1.2);
 }
+
+#root > div.min-h-screen.bg-\[\#0f172a\].text-white.p-4.md\:p-8.font-sans > div > div.flex-1.space-y-10 > div.bg-\[\#1e293b\].p-10.rounded-\[40px\].border.border-gray-800.shadow-2xl > input{
+  background-color:#0f172a;
+  padding:5px;
+  border-raduis: 10px;
+  
+}
