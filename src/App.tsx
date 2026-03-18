@@ -129,38 +129,37 @@ const [textoDenuncia, setTextoDenuncia] = useState('');
 
 //pooldestaque
   const [poolDestaque, setPoolDestaque] = useState<any>(null);
-
-  useEffect(() => {
-  const detectarLinkDireto = () => {
-    // 1. Pega o que vem depois da barra '/' na URL
+  // 1. Efeito para detectar o link na URL e abrir o POPUP
+useEffect(() => {
+  const detectarLinkParaPopup = () => {
+    // Pega o slug da URL (ex: /quem-vai-ganhar)
     const slugDaUrl = window.location.pathname.replace('/', '');
     
-    // 2. Ignora se for uma página do sistema
-    const paginasSistema = ['', 'dashboard', 'login', 'perfil', 'admin'];
+    // Lista de rotas que NÃO são enquetes
+    const paginasSistema = ['', 'dashboard', 'login', 'perfil', 'admin', 'atualizar-senha'];
     
     if (slugDaUrl && !paginasSistema.includes(slugDaUrl)) {
-      // 3. Decodifica para aceitar o "?" e outros caracteres do seu slug
       const slugLimpo = decodeURIComponent(slugDaUrl);
       
-      // 4. Procura na sua lista de pools qual tem esse slug
+      // Procura a enquete dentro da lista 'pools' que você já carrega
       const apostaEncontrada = pools.find(p => p.slug === slugLimpo);
       
       if (apostaEncontrada) {
-        setPoolDestaque(apostaEncontrada); // Ativa o filtro para mostrar só ela
+        // --- AQUI DISPARA O POPUP ---
+        setPoolDestaque(apostaEncontrada); // Filtra a lista ao fundo (opcional)
+        setSelectedPool(apostaEncontrada); // Alimenta o seu modal de aposta
+        setIsModalOpen(true);              // Abre o modal na tela
         
-        // 5. Garante que a tela role até ela (caso haja algum atraso)
-        setTimeout(() => {
-          const el = document.getElementById(slugLimpo);
-          el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 500);
+        console.log("🎯 Pool encontrada via link e aberta no popup!");
       }
     }
   };
 
+  // Só executa quando a lista de pools terminar de carregar do Supabase
   if (pools.length > 0) {
-    detectarLinkDireto();
+    detectarLinkParaPopup();
   }
-}, [pools, window.location.pathname]); // Monitora a lista e a URL
+}, [pools]); // Depende de 'pools' para ter onde procurar o slug
   //pooldestaque
   
   // Isso vai fazer o React "acordar" a cada segundo e re-checar os botões
@@ -2159,6 +2158,38 @@ async function handleResetPassword() {
   </div>
 )}
 
+
+
+{/* Verifique se o seu modal principal usa essas variáveis */}
+{isModalOpen && selectedPool && (
+  <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4">
+    <div className="bg-[#1e293b] w-full max-w-lg rounded-[40px] p-10 border border-gray-800 relative">
+      
+      {/* Botão de Fechar o Popup */}
+      <button 
+        onClick={() => {
+          setIsModalOpen(false);
+          setSelectedPool(null);
+          setPoolDestaque(null); // Limpa o filtro ao fechar o popup
+          window.history.replaceState({}, '', '/'); // Limpa a URL
+        }}
+        className="absolute top-6 right-6 text-gray-500 hover:text-white font-black"
+      >
+        ESC
+      </button>
+
+      <p className="text-[#10b981] text-[10px] font-black uppercase mb-2 italic">🎯 Convite de Aposta</p>
+      <h2 className="text-2xl font-black text-white mb-6 leading-tight">
+        {selectedPool.title}
+      </h2>
+
+      {/* Aqui você renderiza as opções (opcoesCustom ou sim/nao) */}
+      <div className="space-y-3">
+        {/* Seu código de renderizar as opções que você já tem... */}
+      </div>
+    </div>
+  </div>
+)}
 
     </div>
   )
