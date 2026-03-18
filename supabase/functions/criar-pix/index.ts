@@ -12,67 +12,97 @@ serve(async (req) => {
 
   try {
     const { amount, name, cpf, userId } = await req.json()
+    const ASAAS_KEY = Deno.env.get('ASAAS_API_KEY')?.trim()
+
+    if (!ASAAS_KEY) {
+      throw new Error("A chave ASAAS_API_KEY não foi configurada.")
+    }
+
+    // --- LIMPEZA PARA PRODUÇÃO ---
+    // Remove pontos/traços do CPF e garante nome com sobrenome
+    const cleanCpf = cpf.replace(/\D/g, ''); 
+    let nomeParaAsaas = name ? name.trim() : "Usuario Cliente";
+    if (!nomeParaAsaas.includes(' ')) {
+      nomeParaAsaas = `${nomeParaAsaas} Opinia`;
+    }
+
+    // URL OFICIAL (MUDOU AQUI)
+    const BASE_URL = 'https://www.asaas.com/api/v3';
+
+    // 1. BUSCAR CLIENTE
+    let customerId;
+    const searchRes = await fetch(`${BASE_URL}/customers?cpfCnpj=${cleanCpf}`, {
+      method: 'GET',
+      headers: { 
+        'Content-Type': 'application/json', 
+        'access_token': ASAAS_KEY 
+      }
+    });
     
-    // Pegando as chaves que você salvou no Supabase
-    const PUBLIC_KEY = Deno.env.get('PAGOU_PUBLIC_KEY')?.trim();
-    const SECRET_KEY = Deno.env.get('PAGOU_SECRET_KEY')?.trim();
+    const searchData = await searchRes.json();
 
-    if (!SECRET_KEY || !PUBLIC_KEY) {
-      throw new Error("As chaves da Pagou.ai não foram configuradas no Supabase.");
+    if (searchData.data && searchData.data.length > 0) {
+      customerId = searchData.data[0].id;
+    } else {
+      // CRIAR CLIENTE SE NÃO EXISTIR
+      const customerRes = await fetch(`${BASE_URL}/customers`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json', 
+          'access_token': ASAAS_KEY 
+        },
+        body: JSON.stringify({ 
+          name: nomeParaAsaas, 
+          cpfCnpj: cleanCpf 
+        })
+      });
+      
+      const newCustomer = await customerRes.json();
+      if (newCustomer.errors) {
+        throw new Error(`Erro ao criar cliente: ${newCustomer.errors[0].description}`);
+      }
+      customerId = newCustomer.id;
     }
 
-    // Autenticação Basic Auth (Padrão Pagou.ai)
-    const auth = btoa(`${SECRET_KEY}:x`);
-
-    // Lógica para garantir nome e sobrenome
-    let nomeFinal = name ? name.trim() : "Cliente";
-    if (!nomeFinal.includes(' ')) {
-      nomeFinal = `${nomeFinal} Silva`;
-    }
-
-    const response = await fetch("https://api.conta.pagou.ai/v1/transactions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Basic ${auth}`
+    // 2. GERAR COBRANÇA PIX
+    const paymentRes = await fetch(`${BASE_URL}/payments`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json', 
+        'access_token': ASAAS_KEY 
       },
       body: JSON.stringify({
-        amount: Math.round(Number(amount) * 100), // Converte R$ para centavos
-        api_key: PUBLIC_KEY,
-        payment_method: "pix",
-        postback_url: "https://fqbgxvwcknkxomsvsawv.supabase.co/functions/v1/asaas-webhook",
-        metadata: {
-          external_id: userId // Para seu banco de dados saber quem pagou
-        },
-        customer: {
-          name: nomeFinal,
-          document: {
-            number: cpf.replace(/\D/g, ''),
-            type: "cpf"
-          },
-          email: `${userId}@seu-site.com` // Email fictício baseado no ID se não tiver
-        }
+        billingType: 'PIX',
+        value: amount,
+        customer: customerId,
+        dueDate: new Date().toISOString().split('T')[0],
+        externalReference: userId, 
+        description: `Deposito via Site - User: ${userId}`
       })
     });
 
-    const data = await response.json();
-
-    if (data.errors || data.status === 'failed') {
-      throw new Error(data.errors?.[0]?.description || "Erro ao gerar Pix na Pagou.ai");
+    const payment = await paymentRes.json();
+    if (payment.errors) {
+      throw new Error(`Erro ao gerar pagamento: ${payment.errors[0].description}`);
     }
 
-    // Retorna os dados no formato que seu site já espera
-    return new Response(JSON.stringify({
-      id: data.id,
-      paymentCode: data.pix_qr_code, // Código copia e cola
-      qrcodeBase64: data.pix_qr_code_url // Link da imagem do QR Code
-    }), { 
+    // 3. BUSCAR QR CODE
+    const qrRes = await fetch(`${BASE_URL}/payments/${payment.id}/pixQrCode`, {
+      method: 'GET',
+      headers: { 
+        'access_token': ASAAS_KEY 
+      }
+    });
+    
+    const qrData = await qrRes.json();
+
+    return new Response(JSON.stringify(qrData), { 
       headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 200 
+      status: 200
     });
 
   } catch (error: any) {
-    console.error("Erro na Function Pagou.ai:", error.message);
+    console.error("Erro na Edge Function Deposito:", error.message);
     return new Response(JSON.stringify({ error: error.message }), { 
       status: 400, 
       headers: corsHeaders 
