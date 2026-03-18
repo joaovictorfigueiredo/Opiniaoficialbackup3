@@ -46,16 +46,7 @@ const isResetPage = window.location.pathname.includes('/atualizar-senha');
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const [tempNickname, setTempNickname] = useState('');
 
-//busca usuario
-  const [pesquisaUsuario, setPesquisaUsuario] = useState('');
 
-  // Filtra os criadores únicos a partir da lista de pools que você já tem
-const usuariosFiltrados = Array.from(
-  new Map(pools.map(p => [p.user_id, p.profiles])).values()
-).filter((perfil: any) => 
-  perfil?.nickname?.toLowerCase().includes(pesquisaUsuario.toLowerCase())
-).slice(0, 5); // Limita a 5 resultados para não poluir a tela
-  //busca usuario 
 
   const [titulo, setTitulo] = useState('')
   const [isPublic, setIsPublic] = useState(true)
