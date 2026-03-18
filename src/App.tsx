@@ -1169,7 +1169,7 @@ async function handleResetPassword() {
   <div className="relative group">
     <input 
       className="w-full bg-[#0f172a] p-6 rounded-[24px] border border-gray-800 text-2xl font-black outline-none transition-all duration-300 placeholder:text-gray-700 focus:border-[#10b981]/50 focus:ring-1 focus:ring-[#10b981]/20 shadow-inner" 
-      placeholder="Ex: O Bitcoin bate 100k essa semana?" 
+      placeholder="EX:. O Neymar faz gol no próximo jogo?" 
       value={titulo} 
       onChange={(e) => setTitulo(e.target.value)} 
     />
