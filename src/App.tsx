@@ -1302,7 +1302,7 @@ async function handleResetPassword() {
               onClick={() => {
                 const link = `${window.location.origin}/${pool.slug}`; // USANDO pool.slug
                 navigator.clipboard.writeText(link);
-                alert("Link da aposta copiado! Mande nos grupos de WhatsApp 🚀");
+                toast.error("Link da aposta copiado! Mande nos grupos de WhatsApp 🚀");
               }}
               className="flex items-center gap-1 text-[8px] font-black text-[#25D366] hover:brightness-125 transition-all uppercase tracking-tighter cursor-pointer"
             >
