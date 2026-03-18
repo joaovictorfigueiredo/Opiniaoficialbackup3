@@ -2125,39 +2125,6 @@ async function handleResetPassword() {
   </div>
 )}
 
-
-
-{/* Verifique se o seu modal principal usa essas variáveis */}
-{isModalOpen && selectedPool && (
-  <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4">
-    <div className="bg-[#1e293b] w-full max-w-lg rounded-[40px] p-10 border border-gray-800 relative">
-      
-      {/* Botão de Fechar o Popup */}
-      <button 
-        onClick={() => {
-          setIsModalOpen(false);
-          setSelectedPool(null);
-          setPoolDestaque(null); // Limpa o filtro ao fechar o popup
-          window.history.replaceState({}, '', '/'); // Limpa a URL
-        }}
-        className="absolute top-6 right-6 text-gray-500 hover:text-white font-black"
-      >
-        ESC
-      </button>
-
-      <p className="text-[#10b981] text-[10px] font-black uppercase mb-2 italic">🎯 Convite de Aposta</p>
-      <h2 className="text-2xl font-black text-white mb-6 leading-tight">
-        {selectedPool.title}
-      </h2>
-
-      {/* Aqui você renderiza as opções (opcoesCustom ou sim/nao) */}
-      <div className="space-y-3">
-        {/* Seu código de renderizar as opções que você já tem... */}
-      </div>
-    </div>
-  </div>
-)}
-
     </div>
   )
 }
