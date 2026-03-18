@@ -46,7 +46,11 @@ const isResetPage = window.location.pathname.includes('/atualizar-senha');
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const [tempNickname, setTempNickname] = useState('');
 
-
+//pesquisar usuario
+  const [searchTerm, setSearchTerm] = useState('');
+const [usersFound, setUsersFound] = useState([]);
+const [loadingSearch, setLoadingSearch] = useState(false);
+  //pesquisar usuario
 
   const [titulo, setTitulo] = useState('')
   const [isPublic, setIsPublic] = useState(true)
@@ -560,6 +564,31 @@ async function handleLogin() {
     setUser(data.user);
   }
 }
+
+//pesquisar usuario
+  async function buscarUsuarios() {
+  if (!searchTerm.trim()) return;
+
+  setLoadingSearch(true);
+
+  const { data, error } = await supabase
+    .from('profiles') // ou o nome da sua tabela de usuários
+    .select('*')
+    .ilike('nickname', `%${searchTerm}%`)
+    .limit(10);
+
+  if (error) {
+    console.error('Erro ao buscar usuários:', error);
+  } else {
+    setUsersFound(data);
+  }
+
+  setLoadingSearch(false);
+}
+  //pesquisar usuario
+
+
+  
 
 async function handleResetPassword() {
   if (!email) return toast.error("Digite seu e-mail para receber o link de recuperação.");
@@ -1080,6 +1109,40 @@ async function handleResetPassword() {
   return (
     <div className="min-h-screen bg-[#0f172a] text-white p-4 md:p-8 font-sans">
       <div className=" mx-auto flex flex-col lg:flex-row gap-10">
+
+        {/* 🔍 BUSCA DE USUÁRIOS */}
+    <div className="p-4">
+      <input
+        type="text"
+        placeholder="Buscar usuário..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="w-full p-2 rounded-xl bg-[#1e293b] text-white border border-gray-700"
+      />
+
+      <button
+        onClick={buscarUsuarios}
+        className="mt-2 w-full bg-[#10b981] p-2 rounded-xl font-bold"
+      >
+        Buscar
+      </button>
+    </div>
+
+        <div className="mt-4 space-y-2">
+  {loadingSearch && <p>Buscando...</p>}
+
+  {usersFound.map((user) => (
+    <div
+      key={user.id}
+      className="p-3 bg-[#0f172a] rounded-xl border border-gray-800"
+    >
+      <p className="font-bold">{user.nickname}</p>
+      <p className="text-sm text-gray-400">{user.email}</p>
+    </div>
+  ))}
+</div>
+
+        
 
         {/* 1. COLUNA ESQUERDA (RANKING) */}
         <aside className="hidden lg:block w-[280px]">
