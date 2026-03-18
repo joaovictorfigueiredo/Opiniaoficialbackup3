@@ -1321,19 +1321,6 @@ async function handleResetPassword() {
       Denunciar
     </button>
 
-    <button 
-  onClick={() => {
-    // IMPORTANTE: Use pool.slug (que vem do map) e não selectedPool
-    if (pool?.slug) {
-      const link = `${window.location.origin}/${pool.slug}`;
-      navigator.clipboard.writeText(link);
-      alert("Link copiado! 🚀");
-    }
-  }}
-  className="mt-4 w-full bg-[#25D366] text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2"
->
-  📢 COMPARTILHAR DESAFIO
-</button>
     
     <span className="text-[7px] text-gray-800 font-mono uppercase tracking-widest opacity-50">
       #{pool.id.slice(0, 8)}
