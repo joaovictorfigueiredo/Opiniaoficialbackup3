@@ -966,12 +966,77 @@ async function handleResetPassword() {
     : pools.filter(p => p.category === filtroAtivo)
 
 
+//busca usuario
+  const [pesquisaUsuario, setPesquisaUsuario] = useState('');
 
+  // Filtra os criadores únicos a partir da lista de pools que você já tem
+const usuariosFiltrados = Array.from(
+  new Map(pools.map(p => [p.user_id, p.profiles])).values()
+).filter((perfil: any) => 
+  perfil?.nickname?.toLowerCase().includes(pesquisaUsuario.toLowerCase())
+).slice(0, 5); // Limita a 5 resultados para não poluir a tela
+  //busca usuario 
 
   
   
  if (!user) {
   return (
+
+    <div className="max-w-md mx-auto mb-10 px-4 relative z-[100]">
+  <div className="relative group">
+    {/* Ícone de @ decorativo */}
+    <div className="absolute left-5 top-1/2 -translate-y-1/2 text-[#10b981] font-black italic">@</div>
+    
+    <input 
+      type="text"
+      placeholder="Procurar criador..."
+      value={pesquisaUsuario}
+      onChange={(e) => setPesquisaUsuario(e.target.value)}
+      className="w-full bg-[#0f172a] border-2 border-gray-800 rounded-full py-4 pl-12 pr-6 text-white outline-none focus:border-[#10b981] transition-all shadow-2xl placeholder:text-gray-700 font-bold uppercase text-xs tracking-widest"
+    />
+  </div>
+
+  {/* Resultados da busca (aparecem enquanto digita) */}
+  {pesquisaUsuario.length > 0 && (
+    <div className="absolute top-full left-0 right-0 mt-2 mx-4 bg-[#1e293b] border border-gray-800 rounded-[30px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] animate-in fade-in slide-in-from-top-2">
+      {usuariosFiltrados.length > 0 ? (
+        usuariosFiltrados.map((u: any) => (
+          <div 
+            key={u.id}
+            onClick={() => {
+              // Reutiliza as funções que você já tem
+              setPerfilAberto(u);
+              buscarHistoricoCriador(u.id);
+              setPesquisaUsuario(''); // Limpa o campo após clicar
+            }}
+            className="flex items-center gap-4 p-4 hover:bg-[#10b981]/10 cursor-pointer border-b border-gray-800 last:border-0 transition-colors group"
+          >
+            {/* Avatar Circular */}
+            <div className="w-10 h-10 bg-[#10b981] rounded-full flex items-center justify-center font-black text-[#0f172a] text-[10px] group-hover:scale-110 transition-transform">
+              {(u.nickname || 'U').substring(0, 2).toUpperCase()}
+            </div>
+            
+            <div className="flex flex-col">
+              <span className="text-white font-black text-xs uppercase italic">@{u.nickname}</span>
+              <span className="text-[9px] text-gray-500 font-bold uppercase tracking-tighter">Ver todas as apostas</span>
+            </div>
+
+            <div className="ml-auto text-[#10b981] opacity-0 group-hover:opacity-100 transition-opacity">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L204.69,128,138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"></path></svg>
+            </div>
+          </div>
+        ))
+      ) : (
+        <div className="p-6 text-center text-gray-600 text-[10px] font-black uppercase">
+          Nenhum criador encontrado 😕
+        </div>
+      )}
+    </div>
+  )}
+</div>
+
+
+    
     <div className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center p-6">
       <div className="max-w-md w-full bg-[#1e293b] p-8 rounded-3xl border border-gray-800 shadow-2xl">
         <h1 className="text-4xl font-black mb-8 text-center text-[#10b981]">Opinia</h1>
