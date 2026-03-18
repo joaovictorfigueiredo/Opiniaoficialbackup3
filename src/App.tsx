@@ -46,11 +46,7 @@ const isResetPage = window.location.pathname.includes('/atualizar-senha');
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const [tempNickname, setTempNickname] = useState('');
 
-//pesquisar usuario
-  const [searchTerm, setSearchTerm] = useState('');
-const [usersFound, setUsersFound] = useState([]);
-const [loadingSearch, setLoadingSearch] = useState(false);
-  //pesquisar usuario
+
 
   const [titulo, setTitulo] = useState('')
   const [isPublic, setIsPublic] = useState(true)
@@ -565,27 +561,7 @@ async function handleLogin() {
   }
 }
 
-//pesquisar usuario
-  async function buscarUsuarios() {
-  if (!searchTerm.trim()) return;
 
-  setLoadingSearch(true);
-
-  const { data, error } = await supabase
-    .from('profiles') // ou o nome da sua tabela de usuários
-    .select('*')
-    .ilike('nickname', `%${searchTerm}%`)
-    .limit(10);
-
-  if (error) {
-    console.error('Erro ao buscar usuários:', error);
-  } else {
-    setUsersFound(data);
-  }
-
-  setLoadingSearch(false);
-}
-  //pesquisar usuario
 
 
   
@@ -1123,36 +1099,6 @@ async function handleResetPassword() {
 
 
 
-{/* 🔍 BUSCA DE USUÁRIOS */}
-    <div className="p-4">
-      <input
-  type="text"
-  placeholder="Buscar @nickname do criador..."
-  value={searchTerm}
-  onChange={(e) => {
-    setSearchTerm(e.target.value);
-    // Se quiser que busque sozinho ao digitar 3 letras:
-    if (e.target.value.length >= 3) {
-      buscarUsuarios();
-    }
-  }}
-  className="w-full p-4 rounded-2xl bg-[#1e293b] text-white border-2 border-gray-800 focus:border-[#10b981] outline-none transition-all font-bold placeholder:text-gray-600 shadow-inner"
-/>
-    </div>
-
-        <div className="mt-4 space-y-2">
-  {loadingSearch && <p>Buscando...</p>}
-
-  {usersFound.map((user) => (
-    <div
-      key={user.id}
-      className="p-3 bg-[#0f172a] rounded-xl border border-gray-800"
-    >
-      <p className="font-bold">{user.nickname}</p>
-      <p className="text-sm text-gray-400">{user.email}</p>
-    </div>
-  ))}
-</div>
 
 
 
