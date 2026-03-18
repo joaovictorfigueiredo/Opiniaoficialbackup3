@@ -45,6 +45,10 @@ const isResetPage = window.location.pathname.includes('/atualizar-senha');
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const [tempNickname, setTempNickname] = useState('');
 
+//pools links 
+  const [poolAtivaPeloLink, setPoolAtivaPeloLink] = useState<any>(null);
+  //pools links 
+
   const [titulo, setTitulo] = useState('')
   const [isPublic, setIsPublic] = useState(true)
   const [tema, setTema] = useState('⚽ Esportes')
@@ -125,7 +129,32 @@ const dispararDenuncia = (poolId: string) => {
 const [textoDenuncia, setTextoDenuncia] = useState('');
 
 
+//pools links 
+  useEffect(() => {
+  const carregarPoolPelaUrl = async () => {
+    // Pega o que vem depois da "/" (ex: quem-vai-ganhar-flamengo)
+    const slugDaUrl = window.location.pathname.replace('/', '');
 
+    if (slugDaUrl && slugDaUrl !== "") {
+      const { data, error } = await supabase
+        .from('pools')
+        .select('*')
+        .eq('slug', slugDaUrl)
+        .single();
+
+      if (data) {
+        setPoolAtivaPeloLink(data);
+        // Aqui você pode forçar a abertura do modal da enquete
+        // Ex: setModalEnqueteAberto(true);
+      }
+    }
+  };
+
+  carregarPoolPelaUrl();
+}, []);
+//pools links 
+
+  
   // Isso vai fazer o React "acordar" a cada segundo e re-checar os botões
   useEffect(() => {
     const interval = setInterval(() => setAgora(new Date()), 1000);
@@ -1277,6 +1306,17 @@ async function handleResetPassword() {
       <span className="w-1 h-1 bg-red-500/30 rounded-full"></span>
       Denunciar
     </button>
+
+    <button 
+  onClick={() => {
+    const link = `${window.location.origin}/${pool.slug}`;
+    navigator.clipboard.writeText(link);
+    alert("Link da aposta copiado! Mande nos grupos de WhatsApp.");
+  }}
+  className="bg-green-600 text-white p-2 rounded-lg text-xs font-bold"
+>
+  COMPARTILHAR APOSTA 🚀
+</button>
     
     <span className="text-[7px] text-gray-800 font-mono uppercase tracking-widest opacity-50">
       #{pool.id.slice(0, 8)}
