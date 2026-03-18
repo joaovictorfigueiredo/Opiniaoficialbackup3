@@ -1275,16 +1275,10 @@ async function handleResetPassword() {
 
           <div className="space-y-10">
 
-            {poolsFiltradas.map((pool: any) => {
+           {poolsFiltradas.map((pool: any) => {
   const { totalPote, opcoes } = calcularDadosPool(pool)
-  
   return (
-    /* AQUI ESTÁ A CORREÇÃO: Uma única div principal com o ID para o scroll */
-    <div 
-      key={pool.id} 
-      id={pool.slug} 
-      className="p-10 bg-[#1e293b] rounded-[40px] border border-gray-800 relative shadow-xl overflow-hidden group mb-6 scroll-mt-20 transition-all duration-500"
-    >
+    <div key={pool.id} className="p-10 bg-[#1e293b] rounded-[40px] border border-gray-800 relative shadow-xl overflow-hidden group">
       <div className="flex items-center gap-3 mb-6">
         {/* AVATAR */}
         <div
@@ -1300,13 +1294,6 @@ async function handleResetPassword() {
         >
           {(pool.profiles?.nickname || 'U').substring(0, 2).toUpperCase()}
         </div>
-        
-        {/* Resto do seu conteúdo (Título, Opções, etc) continua aqui dentro... */}
-        
-      </div>
-    </div> // Fecha a div principal do card
-  );
-})}
 
         {/* INFO DO CRIADOR, DENÚNCIA E ID */}
 <div className="flex flex-col">
