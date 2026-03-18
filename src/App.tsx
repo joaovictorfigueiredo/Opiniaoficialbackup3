@@ -1258,21 +1258,60 @@ async function handleResetPassword() {
            {poolsFiltradas.map((pool: any) => {
   const { totalPote, opcoes } = calcularDadosPool(pool)
   return (
-    <div key={pool.id} className="p-10 bg-[#1e293b] rounded-[40px] border border-gray-800 relative shadow-xl overflow-hidden group">
+    <div 
+      key={pool.id} 
+      id={pool.slug} // IMPORTANTE: Isso cria o alvo para o scroll
+      className="p-10 bg-[#1e293b] rounded-[40px] border border-gray-800 relative shadow-xl overflow-hidden group mb-6 scroll-mt-24"
+    >
       <div className="flex items-center gap-3 mb-6">
         {/* AVATAR */}
         <div
           onClick={() => {
-            const dadosPerfil = {
-              ...pool.profiles,
-              id: pool.user_id 
-            };
+            const dadosPerfil = { ...pool.profiles, id: pool.user_id };
             setPerfilAberto(dadosPerfil);
             buscarHistoricoCriador(pool.user_id);
           }}
           className="w-8 h-8 bg-[#10b981] rounded-full flex items-center justify-center font-black text-[#0f172a] text-[10px] cursor-pointer relative z-50"
         >
           {(pool.profiles?.nickname || 'U').substring(0, 2).toUpperCase()}
+        </div>
+
+        {/* INFO DO CRIADOR, DENÚNCIA E COMPARTILHAMENTO */}
+        <div className="flex flex-col flex-1">
+          <p className="text-[10px] text-gray-500 font-bold uppercase">
+            @{pool.profiles?.nickname || 'usuario'}
+          </p>
+          
+          <div className="flex items-center gap-3 mt-0.5">
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                navigator.clipboard.writeText(pool.id);
+                setDenunciaInfo({ aberto: true, poolId: pool.id });
+              }}
+              className="relative z-10 flex items-center gap-1 text-[8px] font-black text-gray-700 hover:text-red-500 transition-all uppercase tracking-tighter cursor-pointer"
+            >
+              <span className="w-1 h-1 bg-red-500/30 rounded-full"></span>
+              Denunciar
+            </button>
+
+            {/* BOTÃO DE COMPARTILHAR CORRIGIDO */}
+            <button 
+              onClick={() => {
+                const link = `${window.location.origin}/${pool.slug}`; // USANDO pool.slug
+                navigator.clipboard.writeText(link);
+                alert("Link da aposta copiado! Mande nos grupos de WhatsApp 🚀");
+              }}
+              className="flex items-center gap-1 text-[8px] font-black text-[#25D366] hover:brightness-125 transition-all uppercase tracking-tighter cursor-pointer"
+            >
+              <span className="w-1 h-1 bg-[#25D366]/30 rounded-full"></span>
+              Compartilhar
+            </button>
+            
+            <span className="text-[7px] text-gray-800 font-mono uppercase tracking-widest opacity-50">
+              #{pool.id.slice(0, 8)}
+            </span>
+          </div>
         </div>
 
         
