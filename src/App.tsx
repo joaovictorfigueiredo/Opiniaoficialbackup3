@@ -129,18 +129,6 @@ const dispararDenuncia = (poolId: string) => {
 const [textoDenuncia, setTextoDenuncia] = useState('');
 
 
-//pools links 
-useEffect(() => {
-  const slug = window.location.pathname.replace('/', '');
-  if (slug && poolsFiltradas.length > 0) {
-    setTimeout(() => {
-      const el = document.getElementById(slug);
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 600); // 600ms para dar tempo do Supabase carregar as pools
-  }
-}, [poolsFiltradas]);
-//pools links 
-
   
   // Isso vai fazer o React "acordar" a cada segundo e re-checar os botões
   useEffect(() => {
@@ -1255,19 +1243,18 @@ async function handleResetPassword() {
 
           <div className="space-y-10">
 
-           {poolsFiltradas.map((pool: any) => {
+          {poolsFiltradas.map((pool: any) => {
   const { totalPote, opcoes } = calcularDadosPool(pool)
   return (
-    <div 
-      key={pool.id} 
-      id={pool.slug} // IMPORTANTE: Isso cria o alvo para o scroll
-      className="p-10 bg-[#1e293b] rounded-[40px] border border-gray-800 relative shadow-xl overflow-hidden group mb-6 scroll-mt-24"
-    >
+    <div key={pool.id} className="p-10 bg-[#1e293b] rounded-[40px] border border-gray-800 relative shadow-xl overflow-hidden group">
       <div className="flex items-center gap-3 mb-6">
         {/* AVATAR */}
         <div
           onClick={() => {
-            const dadosPerfil = { ...pool.profiles, id: pool.user_id };
+            const dadosPerfil = {
+              ...pool.profiles,
+              id: pool.user_id 
+            };
             setPerfilAberto(dadosPerfil);
             buscarHistoricoCriador(pool.user_id);
           }}
