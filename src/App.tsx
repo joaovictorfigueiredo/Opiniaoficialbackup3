@@ -127,7 +127,32 @@ const dispararDenuncia = (poolId: string) => {
 };
 const [textoDenuncia, setTextoDenuncia] = useState('');
 
+//pooldestaque
+  const [poolDestaque, setPoolDestaque] = useState<any>(null);
 
+  useEffect(() => {
+  const detectarSlugNaUrl = async () => {
+    const slugDaUrl = window.location.pathname.replace('/', '');
+    
+    // Ignora se for vazio ou páginas padrão
+    const reservados = ['', 'dashboard', 'login', 'perfil', 'admin'];
+    if (slugDaUrl && !reservados.includes(slugDaUrl)) {
+      
+      const { data, error } = await supabase
+        .from('pools')
+        .select('*, profiles(*)') // Já traz o perfil do criador junto
+        .eq('slug', decodeURIComponent(slugDaUrl)) // O decode resolve o problema do "?"
+        .single();
+
+      if (data && !error) {
+        setPoolDestaque(data);
+      }
+    }
+  };
+
+  detectarSlugNaUrl();
+}, []);
+  //pooldestaque
   
   // Isso vai fazer o React "acordar" a cada segundo e re-checar os botões
   useEffect(() => {
@@ -1243,8 +1268,37 @@ async function handleResetPassword() {
           <div className="space-y-10">
 
           {poolsFiltradas.map((pool: any) => {
+if (poolDestaque && pool.id !== poolDestaque.id) return null;
+  
   const { totalPote, opcoes } = calcularDadosPool(pool)
+  
   return (
+    <div 
+      key={pool.id} 
+      id={pool.slug} // O ID deve ser o SLUG para o link funcionar
+      className="p-10 bg-[#1e293b] rounded-[40px] border border-gray-800 relative shadow-xl overflow-hidden group mb-10 scroll-mt-24"
+    >
+      {/* AVISO DE POOL EXCLUSIVA (Aparece apenas quando vindo de um link) */}
+      {poolDestaque && (
+        <div className="mb-6 flex justify-between items-center bg-[#10b981]/10 p-4 rounded-2xl border border-[#10b981]/20 animate-pulse">
+          <span className="text-[#10b981] text-[10px] font-black uppercase italic">
+            🎯 Você recebeu um link direto para esta aposta
+          </span>
+          <button 
+            onClick={() => {
+              setPoolDestaque(null);
+              window.history.replaceState({}, '', '/'); // Limpa a URL para o padrão
+            }}
+            className="bg-[#10b981] text-[#0f172a] px-3 py-1 rounded-lg text-[9px] font-black hover:scale-105 transition-all"
+          >
+            VER TODAS ➔
+          </button>
+        </div>
+      )}
+      {/* AVISO DE POOL EXCLUSIVA (Aparece apenas quando vindo de um link) */}
+
+
+      
     <div key={pool.id} className="p-10 bg-[#1e293b] rounded-[40px] border border-gray-800 relative shadow-xl overflow-hidden group">
       <div className="flex items-center gap-3 mb-6">
         {/* AVATAR */}
