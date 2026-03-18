@@ -130,35 +130,15 @@ const [textoDenuncia, setTextoDenuncia] = useState('');
 
 
 //pools links 
- // Lógica de Deep Linking: Abre a enquete pelo SLUG na URL
 useEffect(() => {
-  const detectarPoolPelaUrl = async () => {
-    // 1. Pega o que está após a barra (ex: quem-vence-flamengo)
-    const slugDaUrl = window.location.pathname.replace('/', '');
-
-    // Ignora se for vazio ou se for caminhos comuns do sistema
-    const caminhosReservados = ['', 'dashboard', 'login', 'perfil', 'admin'];
-    if (slugDaUrl && !caminhosReservados.includes(slugDaUrl)) {
-      
-      const { data, error } = await supabase
-        .from('pools')
-        .select('*')
-        .eq('slug', slugDaUrl)
-        .single();
-
-      if (data && !error) {
-        // 2. Alimenta os estados que você já tem no seu App
-        setSelectedPool(data);
-        setIsModalOpen(true);
-        
-        // Limpa a URL visualmente para não bugar ao dar F5 depois
-        window.history.replaceState({}, '', '/');
-      }
-    }
-  };
-
-  detectarPoolPelaUrl();
-}, []);
+  const slug = window.location.pathname.replace('/', '');
+  if (slug && poolsFiltradas.length > 0) {
+    setTimeout(() => {
+      const el = document.getElementById(slug);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 600); // 600ms para dar tempo do Supabase carregar as pools
+  }
+}, [poolsFiltradas]);
 //pools links 
 
   
