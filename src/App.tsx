@@ -1318,9 +1318,12 @@ async function handleResetPassword() {
 
     <button 
   onClick={() => {
-    const link = `${window.location.origin}/${Pool.slug}`;
-    navigator.clipboard.writeText(link);
-    alert("Link da aposta copiado! Mande nos grupos de WhatsApp 🚀");
+    // IMPORTANTE: Use pool.slug (que vem do map) e não selectedPool
+    if (pool?.slug) {
+      const link = `${window.location.origin}/${pool.slug}`;
+      navigator.clipboard.writeText(link);
+      alert("Link copiado! 🚀");
+    }
   }}
   className="mt-4 w-full bg-[#25D366] text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2"
 >
