@@ -14,6 +14,7 @@ import { FunctionsHttpError } from '@supabase/supabase-js';
 import { Turnstile } from '@marsidev/react-turnstile';
 import AtualizarSenha from './atualizar-senha';
 import { toast } from 'react-hot-toast';
+import { useParams } from "react-router-dom";
 
 
 
@@ -128,38 +129,23 @@ const dispararDenuncia = (poolId: string) => {
 const [textoDenuncia, setTextoDenuncia] = useState('');
 
 //pooldestaque
-  const [poolDestaque, setPoolDestaque] = useState<any>(null);
-  // 1. Efeito para detectar o link na URL e abrir o POPUP
-useEffect(() => {
-  const detectarLinkParaPopup = () => {
-    // Pega o slug da URL (ex: /quem-vai-ganhar)
-    const slugDaUrl = window.location.pathname.replace('/', '');
-    
-    // Lista de rotas que NÃO são enquetes
-    const paginasSistema = ['', 'dashboard', 'login', 'perfil', 'admin', 'atualizar-senha'];
-    
-    if (slugDaUrl && !paginasSistema.includes(slugDaUrl)) {
-      const slugLimpo = decodeURIComponent(slugDaUrl);
-      
-      // Procura a enquete dentro da lista 'pools' que você já carrega
-      const apostaEncontrada = pools.find(p => p.slug === slugLimpo);
-      
-      if (apostaEncontrada) {
-        // --- AQUI DISPARA O POPUP ---
-        setPoolDestaque(apostaEncontrada); // Filtra a lista ao fundo (opcional)
-        setSelectedPool(apostaEncontrada); // Alimenta o seu modal de aposta
-        setIsModalOpen(true);              // Abre o modal na tela
-        
-        console.log("🎯 Pool encontrada via link e aberta no popup!");
-      }
-    }
-  };
+ const { slug } = useParams();
 
-  // Só executa quando a lista de pools terminar de carregar do Supabase
-  if (pools.length > 0) {
-    detectarLinkParaPopup();
+useEffect(() => {
+  async function buscarPool() {
+    const { data, error } = await supabase
+      .from("pools")
+      .select("*")
+      .eq("slug", slug)
+      .single();
+
+    if (data) {
+      setPool(data);
+    }
   }
-}, [pools]); // Depende de 'pools' para ter onde procurar o slug
+
+  buscarPool();
+}, [slug]);
   //pooldestaque
   
   // Isso vai fazer o React "acordar" a cada segundo e re-checar os botões
@@ -1278,6 +1264,27 @@ async function handleResetPassword() {
           {poolsFiltradas.map((pool: any) => {
 
   const { totalPote, opcoes } = calcularDadosPool(pool)
+  // 👇 COLOCA A FUNÇÃO AQUI DENTRO
+  const compartilharPool = () => {
+    const link = `https://opinia.site/pool/${pool.slug}`;
+
+    const mensagem = encodeURIComponent(
+      `🔥 Tô participando dessa aposta!\n\n` +
+      `🧠 ${pool.title}\n\n` +
+      `Vem dar seu palpite e ganhar no PIX: `
+    );
+
+    if (navigator.share) {
+      navigator.share({
+        title: "Opinia",
+        text: pool.title,
+        url: link,
+      });
+    } else {
+      window.open(`https://wa.me/?text=${mensagem}${link}`, "_blank");
+    }
+  };
+
   
   return (    
     <div key={pool.id} className="p-10 bg-[#1e293b] rounded-[40px] border border-gray-800 relative shadow-xl overflow-hidden group">
