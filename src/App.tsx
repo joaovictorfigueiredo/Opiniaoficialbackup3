@@ -131,27 +131,36 @@ const [textoDenuncia, setTextoDenuncia] = useState('');
   const [poolDestaque, setPoolDestaque] = useState<any>(null);
 
   useEffect(() => {
-  const detectarSlugNaUrl = async () => {
+  const detectarLinkDireto = () => {
+    // 1. Pega o que vem depois da barra '/' na URL
     const slugDaUrl = window.location.pathname.replace('/', '');
     
-    // Ignora se for vazio ou páginas padrão
-    const reservados = ['', 'dashboard', 'login', 'perfil', 'admin'];
-    if (slugDaUrl && !reservados.includes(slugDaUrl)) {
+    // 2. Ignora se for uma página do sistema
+    const paginasSistema = ['', 'dashboard', 'login', 'perfil', 'admin'];
+    
+    if (slugDaUrl && !paginasSistema.includes(slugDaUrl)) {
+      // 3. Decodifica para aceitar o "?" e outros caracteres do seu slug
+      const slugLimpo = decodeURIComponent(slugDaUrl);
       
-      const { data, error } = await supabase
-        .from('pools')
-        .select('*, profiles(*)') // Já traz o perfil do criador junto
-        .eq('slug', decodeURIComponent(slugDaUrl)) // O decode resolve o problema do "?"
-        .single();
-
-      if (data && !error) {
-        setPoolDestaque(data);
+      // 4. Procura na sua lista de pools qual tem esse slug
+      const apostaEncontrada = pools.find(p => p.slug === slugLimpo);
+      
+      if (apostaEncontrada) {
+        setPoolDestaque(apostaEncontrada); // Ativa o filtro para mostrar só ela
+        
+        // 5. Garante que a tela role até ela (caso haja algum atraso)
+        setTimeout(() => {
+          const el = document.getElementById(slugLimpo);
+          el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 500);
       }
     }
   };
 
-  detectarSlugNaUrl();
-}, []);
+  if (pools.length > 0) {
+    detectarLinkDireto();
+  }
+}, [pools, window.location.pathname]); // Monitora a lista e a URL
   //pooldestaque
   
   // Isso vai fazer o React "acordar" a cada segundo e re-checar os botões
