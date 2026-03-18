@@ -23,7 +23,7 @@ serve(async (req) => {
     const cleanCpf = cpf.replace(/\D/g, ''); 
     let nomeParaAsaas = name ? name.trim() : "Usuario Cliente";
     if (!nomeParaAsaas.includes(' ')) {
-      nomeParaAsaas = `${nomeParaAsaas} Silva`;
+      nomeParaAsaas = `${nomeParaAsaas} Opinia`;
     }
 
     // URL OFICIAL (MUDOU AQUI)
