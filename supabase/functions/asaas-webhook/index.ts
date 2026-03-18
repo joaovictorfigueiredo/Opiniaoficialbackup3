@@ -2,27 +2,26 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 serve(async (req) => {
-  const asaasToken = req.headers.get("asaas-access-token");
+  // Tenta pegar o token de ambos os cabeçalhos possíveis do Asaas
+  const asaasToken = req.headers.get("asaas-access-auth") || req.headers.get("asaas-access-token");
   const secretToken = Deno.env.get('ASAAS_WEBHOOK_TOKEN');
 
-  // 🔐 Validação de segurança
   if (asaasToken !== secretToken) {
-    console.error("❌ Token inválido recebido!");
+    console.error("❌ Token inválido!");
     return new Response("Unauthorized", { status: 401 });
   }
 
   let body: any = null;
-
   try {
     body = await req.json();
   } catch {
     return new Response("ok", { status: 200 });
   }
 
-  // 🚀 Responde IMEDIATO (evita timeout do Asaas)
+  // Responde rápido para o Asaas não achar que o servidor caiu
   const response = new Response("ok", { status: 200 });
-
-  // 🔥 Processa em background
+  
+  // Processa a lógica sem travar a resposta
   processWebhook(body);
 
   return response;
@@ -35,94 +34,58 @@ async function processWebhook(body: any) {
   );
 
   try {
-    console.log("📩 Evento recebido:", body.event);
+    console.log("📩 Evento:", body.event);
 
-    // 🧾 LOG COMPLETO (ESSENCIAL PRA DEBUG)
-    await supabase.from('webhook_logs').insert({
-      event: body.event,
-      payload: body
-    });
+    // Salva o log para você ver o que chegou no banco de dados
+    await supabase.from('webhook_logs').insert({ event: body.event, payload: body });
 
-    // =========================
-    // 💰 DEPÓSITOS
-    // =========================
+    // 💰 1. DEPÓSITOS (Entrada de dinheiro)
     if (body.event === 'PAYMENT_RECEIVED' || body.event === 'PAYMENT_CONFIRMED') {
       const payment = body.payment;
-
       const userId = payment?.externalReference;
       const amount = payment?.value;
 
-      if (!userId || !amount) {
-        console.error("❌ Dados inválidos no depósito");
-        return;
+      if (userId && amount) {
+        await supabase.rpc('increment_wallet_balance', { 
+          user_id_param: userId, 
+          amount_param: amount 
+        });
+        
+        await supabase.from('transactions').insert({
+          user_id: userId,
+          amount,
+          type: 'deposit',
+          status: 'completed',
+          description: 'Depósito PIX Asaas'
+        });
       }
-
-      console.log(`💰 Depósito: R$ ${amount} | User: ${userId}`);
-
-      // Atualiza saldo
-      const { error: rpcError } = await supabase.rpc('increment_wallet_balance', { 
-        user_id_param: userId, 
-        amount_param: amount 
-      });
-
-      if (rpcError) {
-        console.error("❌ Erro ao atualizar saldo:", rpcError.message);
-        return;
-      }
-
-      // Registra transação
-      await supabase.from('transactions').insert({
-        user_id: userId,
-        amount,
-        type: 'deposit',
-        status: 'completed',
-        description: 'Depósito PIX Asaas'
-      });
-
-      console.log("✅ Depósito concluído");
     }
 
-    // =========================
-    // ❌ SAQUE FALHOU
-    // =========================
-    if (body.event === 'TRANSFER_FAILED') {
+    // ❌ 2. SAQUE FALHOU (Estornar dinheiro para o usuário)
+    // O evento correto no Asaas é TRANSFER_FALHOU
+    if (body.event === 'TRANSFER_FALHOU') {
       const transfer = body.transfer;
-
-      const description = transfer?.description || '';
-      const userId = description.includes('User ') 
-        ? description.split('User ')[1] 
-        : null;
-
+      const userId = transfer?.externalReference; // Pegando do campo correto
       const amount = transfer?.value;
 
-      if (!userId || !amount) {
-        console.error("❌ Dados inválidos no saque falho");
-        return;
+      if (userId && amount) {
+        console.log(`🔄 Estornando R$ ${amount} para User ${userId}`);
+        await supabase.rpc('estornar_saque_erro', {
+          p_user_id: userId,
+          p_amount: amount
+        });
+
+        await supabase.from('transactions')
+          .update({ status: 'failed' })
+          .eq('external_id', transfer.id);
       }
-
-      console.log(`❌ Saque falhou | User: ${userId} | R$ ${amount}`);
-
-      // Estorna saldo
-      await supabase.rpc('estornar_saque_erro', {
-        p_user_id: userId,
-        p_amount: amount
-      });
-
-      // Atualiza status
-      await supabase.from('transactions')
-        .update({ status: 'failed' })
-        .eq('external_id', transfer.id);
-
-      console.log("🔄 Estorno realizado com sucesso");
     }
 
-    // =========================
-    // ✅ SAQUE CONCLUÍDO
-    // =========================
-    if (body.event === 'TRANSFER_DONE') {
+    // ✅ 3. SAQUE CONCLUÍDO (Dinheiro saiu com sucesso)
+    // O evento recomendado é TRANSFER_CONFIRMED
+    if (body.event === 'TRANSFER_CONFIRMED') {
       const transfer = body.transfer;
-
-      console.log("✅ Saque concluído:", transfer.id);
+      console.log("✅ Saque confirmado no banco:", transfer.id);
 
       await supabase.from('transactions')
         .update({ status: 'completed' })
@@ -130,6 +93,6 @@ async function processWebhook(body: any) {
     }
 
   } catch (err: any) {
-    console.error("💥 Erro geral no webhook:", err.message);
+    console.error("💥 Erro processamento:", err.message);
   }
 }
