@@ -1282,7 +1282,7 @@ async function handleResetPassword() {
       key={pool.id} 
       id={pool.slug} 
       className="p-10 bg-[#1e293b] rounded-[40px] border border-gray-800 relative shadow-xl overflow-hidden group mb-6 scroll-mt-10"
-    >
+    ></div>div>
     <div key={pool.id} className="p-10 bg-[#1e293b] rounded-[40px] border border-gray-800 relative shadow-xl overflow-hidden group">
       <div className="flex items-center gap-3 mb-6">
         {/* AVATAR */}
