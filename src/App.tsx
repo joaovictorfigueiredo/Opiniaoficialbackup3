@@ -1162,7 +1162,7 @@ async function handleResetPassword() {
             </div>
           </div>
           <div className="bg-[#1e293b] p-10 rounded-[40px] border border-gray-800 shadow-2xl">
-            <input className="w-full p-0 bg-transparent mb-8 text-3xl font-black outline-none placeholder-green-700" placeholder="Qual sua previsão?" value={titulo} onChange={(e) => setTitulo(e.target.value)} />
+            <input className="w-full p-0 bg-transparent mb-8 text-3xl font-black outline-none placeholder-green-00" placeholder="Qual sua previsão?" value={titulo} onChange={(e) => setTitulo(e.target.value)} />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               <select className="bg-[#0f172a] p-4 rounded-2xl border border-gray-800 text-xs text-[#10b981] font-bold outline-none" value={tema} onChange={(e) => setTema(e.target.value)}>
                 {temasDisponiveis.map(t => <option key={t} value={t}>{t}</option>)}
