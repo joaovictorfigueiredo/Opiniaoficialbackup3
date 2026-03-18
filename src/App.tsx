@@ -1179,6 +1179,9 @@ async function handleResetPassword() {
           </div>
           <div className="bg-[#1e293b] p-10 rounded-[40px] border border-gray-800 shadow-2xl">
             <div className="flex flex-col gap-2 mb-8">
+              <label className="text-[#10b981] text-[10px] font-black uppercase italic ml-2 tracking-widest opacity-70">
+    💰Ganhe 1,5% de todo o valor movimentado na sua pool.
+  </label>
   <label className="text-[#10b981] text-[10px] font-black uppercase italic ml-2 tracking-widest opacity-70">
     🎯 Título do Desafio
   </label>
