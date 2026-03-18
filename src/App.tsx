@@ -130,27 +130,34 @@ const [textoDenuncia, setTextoDenuncia] = useState('');
 
 
 //pools links 
-  useEffect(() => {
-  const carregarPoolPelaUrl = async () => {
-    // Pega o que vem depois da "/" (ex: quem-vai-ganhar-flamengo)
+ // Lógica de Deep Linking: Abre a enquete pelo SLUG na URL
+useEffect(() => {
+  const detectarPoolPelaUrl = async () => {
+    // 1. Pega o que está após a barra (ex: quem-vence-flamengo)
     const slugDaUrl = window.location.pathname.replace('/', '');
 
-    if (slugDaUrl && slugDaUrl !== "") {
+    // Ignora se for vazio ou se for caminhos comuns do sistema
+    const caminhosReservados = ['', 'dashboard', 'login', 'perfil', 'admin'];
+    if (slugDaUrl && !caminhosReservados.includes(slugDaUrl)) {
+      
       const { data, error } = await supabase
         .from('pools')
         .select('*')
         .eq('slug', slugDaUrl)
         .single();
 
-      if (data) {
-        setPoolAtivaPeloLink(data);
-        // Aqui você pode forçar a abertura do modal da enquete
-        // Ex: setModalEnqueteAberto(true);
+      if (data && !error) {
+        // 2. Alimenta os estados que você já tem no seu App
+        setSelectedPool(data);
+        setIsModalOpen(true);
+        
+        // Limpa a URL visualmente para não bugar ao dar F5 depois
+        window.history.replaceState({}, '', '/');
       }
     }
   };
 
-  carregarPoolPelaUrl();
+  detectarPoolPelaUrl();
 }, []);
 //pools links 
 
@@ -1309,13 +1316,13 @@ async function handleResetPassword() {
 
     <button 
   onClick={() => {
-    const link = `${window.location.origin}/${pool.slug}`;
+    const link = `${window.location.origin}/${selectedPool.slug}`;
     navigator.clipboard.writeText(link);
-    alert("Link da aposta copiado! Mande nos grupos de WhatsApp.");
+    alert("Link da aposta copiado! Mande nos grupos de WhatsApp 🚀");
   }}
-  className="bg-green-600 text-white p-2 rounded-lg text-xs font-bold"
+  className="mt-4 w-full bg-[#25D366] text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2"
 >
-  COMPARTILHAR APOSTA 🚀
+  📢 COMPARTILHAR DESAFIO
 </button>
     
     <span className="text-[7px] text-gray-800 font-mono uppercase tracking-widest opacity-50">
