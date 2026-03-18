@@ -128,25 +128,6 @@ const dispararDenuncia = (poolId: string) => {
 };
 const [textoDenuncia, setTextoDenuncia] = useState('');
 
-//pooldestaque
- const { slug } = useParams();
-
-useEffect(() => {
-  async function buscarPool() {
-    const { data, error } = await supabase
-      .from("pools")
-      .select("*")
-      .eq("slug", slug)
-      .single();
-
-    if (data) {
-      setPool(data);
-    }
-  }
-
-  buscarPool();
-}, [slug]);
-  //pooldestaque
   
   // Isso vai fazer o React "acordar" a cada segundo e re-checar os botões
   useEffect(() => {
@@ -1264,27 +1245,6 @@ async function handleResetPassword() {
           {poolsFiltradas.map((pool: any) => {
 
   const { totalPote, opcoes } = calcularDadosPool(pool)
-  // 👇 COLOCA A FUNÇÃO AQUI DENTRO
-  const compartilharPool = () => {
-    const link = `https://opinia.site/pool/${pool.slug}`;
-
-    const mensagem = encodeURIComponent(
-      `🔥 Tô participando dessa aposta!\n\n` +
-      `🧠 ${pool.title}\n\n` +
-      `Vem dar seu palpite e ganhar no PIX: `
-    );
-
-    if (navigator.share) {
-      navigator.share({
-        title: "Opinia",
-        text: pool.title,
-        url: link,
-      });
-    } else {
-      window.open(`https://wa.me/?text=${mensagem}${link}`, "_blank");
-    }
-  };
-
   
   return (    
     <div key={pool.id} className="p-10 bg-[#1e293b] rounded-[40px] border border-gray-800 relative shadow-xl overflow-hidden group">
