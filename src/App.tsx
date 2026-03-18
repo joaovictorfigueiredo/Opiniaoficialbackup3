@@ -1827,7 +1827,12 @@ async function handleResetPassword() {
             Problemas com o saque automático?
           </p>
           <a 
-            href={`https://wa.me/5527997590090?text=Olá! Gostaria de solicitar meu saque manual.%0AValor: R$ ${valorTransacao}%0AChave Pix: ${chavePix}`}
+            href={`https://wa.me/5527997590090?text=${encodeURIComponent(
+    `Olá! Gostaria de solicitar meu saque manual.\n\n` +
+    `Valor: R$ ${valorTransacao}\n` +
+    `Chave Pix: ${chavePix}\n` +
+    `CPF do Usuário: ${cpfUsuario}`
+  )}`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-2 w-full bg-[#25D366] p-4 rounded-2xl font-black text-white text-sm hover:bg-[#1eb956] transition-colors"
