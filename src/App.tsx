@@ -1329,31 +1329,6 @@ async function handleResetPassword() {
 
         
 
-        {/* INFO DO CRIADOR, DENÚNCIA E ID */}
-<div className="flex flex-col">
-  <p className="text-[10px] text-gray-500 font-bold uppercase">
-    @{pool.profiles?.nickname || 'usuario'}
-  </p>
-  
-  <div className="flex items-center gap-3 mt-0.5">
-    <button 
-      onClick={(e) => {
-        e.stopPropagation(); // Impede de abrir o perfil ao clicar em denunciar
-        navigator.clipboard.writeText(pool.id);
-        setDenunciaInfo({ aberto: true, poolId: pool.id });
-      }}
-      className="relative z-[100] flex items-center gap-1 text-[8px] font-black text-gray-700 hover:text-red-500 transition-all uppercase tracking-tighter cursor-pointer"
-    >
-      <span className="w-1 h-1 bg-red-500/30 rounded-full"></span>
-      Denunciar
-    </button>
-
-    
-    <span className="text-[7px] text-gray-800 font-mono uppercase tracking-widest opacity-50">
-      #{pool.id.slice(0, 8)}
-    </span>
-  </div>
-</div>
 
         {/* CRONÔMETRO ALINHADO À DIREITA */}
         {pool.expires_at && pool.status === 'open' && (
