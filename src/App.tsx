@@ -1126,19 +1126,18 @@ async function handleResetPassword() {
 {/* 🔍 BUSCA DE USUÁRIOS */}
     <div className="p-4">
       <input
-        type="text"
-        placeholder="Buscar usuário..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="w-full p-2 rounded-xl bg-[#1e293b] text-white border border-gray-700"
-      />
-
-      <button
-        onClick={buscarUsuarios}
-        className="mt-2 w-full bg-[#10b981] p-2 rounded-xl font-bold"
-      >
-        Buscar
-      </button>
+  type="text"
+  placeholder="Buscar @nickname do criador..."
+  value={searchTerm}
+  onChange={(e) => {
+    setSearchTerm(e.target.value);
+    // Se quiser que busque sozinho ao digitar 3 letras:
+    if (e.target.value.length >= 3) {
+      buscarUsuarios();
+    }
+  }}
+  className="w-full p-4 rounded-2xl bg-[#1e293b] text-white border-2 border-gray-800 focus:border-[#10b981] outline-none transition-all font-bold placeholder:text-gray-600 shadow-inner"
+/>
     </div>
 
         <div className="mt-4 space-y-2">
