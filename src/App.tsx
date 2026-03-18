@@ -14,7 +14,7 @@ import { FunctionsHttpError } from '@supabase/supabase-js';
 import { Turnstile } from '@marsidev/react-turnstile';
 import AtualizarSenha from './atualizar-senha';
 import { toast } from 'react-hot-toast';
-import { useParams } from "react-router-dom";
+
 
 
 
