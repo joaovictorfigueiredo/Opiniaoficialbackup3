@@ -1831,7 +1831,7 @@ async function handleResetPassword() {
       onClick={() => {
         const valorNum = Number(valorTransacao);
         if (valorNum < 30) {
-          alert("Atenção: O valor mínimo para solicitação de saque manual é de R$ 30,00.");
+          toast.error("Atenção: O valor mínimo para solicitação de saque manual é de R$ 30,00.");
           return;
         }
         
@@ -1842,7 +1842,7 @@ async function handleResetPassword() {
           `Chave Pix: ${chavePix}\n` +
           `CPF: ${cpfUsuario}`
         );
-        window.open(`https://wa.me/5511999999999?text=${mensagem}`, '_blank');
+        window.open(`https://wa.me/5527997590090?text=${mensagem}`, '_blank');
         setAvisoSaqueEnviado(true);
       }}
       className={`flex items-center justify-center gap-2 w-full p-4 rounded-2xl font-black text-white text-sm transition-all ${
