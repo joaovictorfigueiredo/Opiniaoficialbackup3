@@ -46,7 +46,6 @@ const isResetPage = window.location.pathname.includes('/atualizar-senha');
   const [tempNickname, setTempNickname] = useState('');
 
 //pools links 
-  const [poolAtivaPeloLink, setPoolAtivaPeloLink] = useState<any>(null);
   //pools links 
 
   const [titulo, setTitulo] = useState('')
