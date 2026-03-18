@@ -1162,7 +1162,21 @@ async function handleResetPassword() {
             </div>
           </div>
           <div className="bg-[#1e293b] p-10 rounded-[40px] border border-gray-800 shadow-2xl">
-            <input className="w-full p-0 bg-transparent mb-8 text-3xl font-black outline-none placeholder-green-00" placeholder="Qual sua previsão?" value={titulo} onChange={(e) => setTitulo(e.target.value)} />
+            <div className="flex flex-col gap-2 mb-8">
+  <label className="text-[#10b981] text-[10px] font-black uppercase italic ml-2 tracking-widest opacity-70">
+    🎯 Título do Desafio
+  </label>
+  <div className="relative group">
+    <input 
+      className="w-full bg-[#0f172a] p-6 rounded-[24px] border border-gray-800 text-2xl font-black outline-none transition-all duration-300 placeholder:text-gray-700 focus:border-[#10b981]/50 focus:ring-1 focus:ring-[#10b981]/20 shadow-inner" 
+      placeholder="Ex: O Bitcoin bate 100k essa semana?" 
+      value={titulo} 
+      onChange={(e) => setTitulo(e.target.value)} 
+    />
+    {/* Linha decorativa de foco */}
+    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-[#10b981] group-focus-within:w-[60%] transition-all duration-500 shadow-[0_0_10px_#10b981]" />
+  </div>
+</div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               <select className="bg-[#0f172a] p-4 rounded-2xl border border-gray-800 text-xs text-[#10b981] font-bold outline-none" value={tema} onChange={(e) => setTema(e.target.value)}>
                 {temasDisponiveis.map(t => <option key={t} value={t}>{t}</option>)}
