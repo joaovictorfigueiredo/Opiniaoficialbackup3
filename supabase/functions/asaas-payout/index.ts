@@ -7,8 +7,9 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
-  // 1. Lidar com o CORS (Preflight)
-  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders })
+  }
 
   try {
     const supabase = createClient(
@@ -16,49 +17,70 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    // 2. Autenticação do Usuário logado
+    // 🔐 Autenticação
     const authHeader = req.headers.get('Authorization')
     const token = authHeader?.replace('Bearer ', '')
     const { data: { user }, error: authError } = await supabase.auth.getUser(token)
 
     if (authError || !user) {
-      return new Response(JSON.stringify({ error: 'Não autorizado' }), { status: 401, headers: corsHeaders })
+      return new Response(JSON.stringify({ error: 'Não autorizado' }), {
+        status: 401,
+        headers: corsHeaders
+      })
     }
 
-    const { amount, pixKey, pixKeyType } = await req.json()
-    const numericAmount = parseFloat(amount);
+    const body = await req.json()
+    const amount = parseFloat(body.amount)
+    const pixKey = body.pixKey
 
-    // 3. Mapeamento de Tipos para o Asaas
-    let mappedType = String(pixKeyType).toUpperCase();
-    if (mappedType.includes('CPF')) mappedType = 'CPF';
-    else if (mappedType.includes('CNPJ')) mappedType = 'CNPJ';
-    else if (mappedType.includes('EMAIL') || mappedType.includes('E-MAIL')) mappedType = 'EMAIL';
-    else if (mappedType.includes('TELEFONE') || mappedType.includes('PHONE') || mappedType.includes('CELULAR')) mappedType = 'PHONE';
-    else mappedType = 'EVP';
+    // ✅ VALIDAÇÕES
+    if (!amount || amount <= 0) {
+      return new Response(JSON.stringify({ error: 'Valor inválido' }), {
+        status: 400,
+        headers: corsHeaders
+      })
+    }
 
-    // 4. Limpeza da Chave PIX (Remove pontos, traços, etc)
-    let cleanPixKey = pixKey.trim();
-    if (mappedType === 'CPF' || mappedType === 'PHONE' || mappedType === 'CNPJ') {
-      cleanPixKey = pixKey.replace(/\D/g, ''); 
-      
-      if (mappedType === 'PHONE') {
-        if (!cleanPixKey.startsWith('55')) cleanPixKey = '55' + cleanPixKey;
-        if (!cleanPixKey.startsWith('+')) cleanPixKey = '+' + cleanPixKey;
+    if (!pixKey || pixKey.trim().length < 5) {
+      return new Response(JSON.stringify({ error: 'Chave PIX inválida' }), {
+        status: 400,
+        headers: corsHeaders
+      })
+    }
+
+    // 🧼 Limpeza da chave PIX
+    let cleanPixKey = pixKey.trim()
+
+    // Remove máscara se for número
+    if (/^\d+$/.test(cleanPixKey)) {
+      cleanPixKey = cleanPixKey.replace(/\D/g, '')
+    }
+
+    // Telefone → adiciona +55
+    if (cleanPixKey.length >= 10 && cleanPixKey.length <= 13) {
+      if (!cleanPixKey.startsWith('55')) {
+        cleanPixKey = '55' + cleanPixKey
       }
+      cleanPixKey = '+' + cleanPixKey
     }
 
-    // 5. Reserva o saldo no Banco de Dados (RPC solicitar_saque_seguro)
+    console.log(`💸 Solicitação de saque | User: ${user.id} | Valor: ${amount}`)
+
+    // 💰 Reserva saldo
     const { data: ok, error: dbError } = await supabase.rpc('solicitar_saque_seguro', {
       p_user_id: user.id,
-      p_amount: numericAmount
+      p_amount: amount
     })
 
     if (dbError || !ok) {
-      console.error("Erro ao reservar saldo:", dbError);
-      return new Response(JSON.stringify({ error: 'Saldo insuficiente ou erro no banco.' }), { status: 400, headers: corsHeaders })
+      console.error("❌ Erro ao reservar saldo:", dbError)
+      return new Response(JSON.stringify({ error: 'Saldo insuficiente' }), {
+        status: 400,
+        headers: corsHeaders
+      })
     }
 
-    // 6. Chamada ao Asaas (Forçando PIX e vinculando ao Usuário)
+    // 🚀 Envia para Asaas
     const asaasRes = await fetch('https://www.asaas.com/api/v3/transfers', {
       method: 'POST',
       headers: {
@@ -67,46 +89,59 @@ serve(async (req) => {
         'access_token': Deno.env.get('ASAAS_API_KEY')?.trim() || ''
       },
       body: JSON.stringify({
-        value: numericAmount,
+        value: amount,
         pixAddressKey: cleanPixKey,
-        pixAddressKeyType: mappedType,
-        operationType: 'PIX', // Crucial para não dar erro de conta bancária
+        operationType: 'PIX',
         description: `Saque Plataforma - User ${user.id}`,
-        externalReference: user.id // Para o Webhook identificar o dono do saque
+        externalReference: user.id
       })
     })
 
     const result = await asaasRes.json()
-    console.log("Resposta detalhada Asaas:", JSON.stringify(result))
+    console.log("📤 Resposta Asaas:", result)
 
-    // 7. Tratamento de Erros do Asaas (Estorno Automático)
+    // ❌ ERRO NO ASAAS → ESTORNA
     if (!asaasRes.ok) {
-      console.error("Asaas recusou o saque:", result);
-      
-      // Chama a função de estorno para o dinheiro voltar pro saldo do usuário na hora
+      console.error("❌ Erro Asaas:", result)
+
       await supabase.rpc('estornar_saque_erro', {
         p_user_id: user.id,
-        p_amount: numericAmount
+        p_amount: amount
       })
 
-      const msg = result.errors?.[0]?.description || 'Erro no processamento do Asaas.';
-      return new Response(JSON.stringify({ error: `Asaas: ${msg}` }), { status: 400, headers: corsHeaders })
+      const msg = result.errors?.[0]?.description || 'Erro no saque'
+      return new Response(JSON.stringify({ error: msg }), {
+        status: 400,
+        headers: corsHeaders
+      })
     }
 
-    // 8. Registro da transação na tabela (Log de transações)
+    // 🧾 REGISTRA TRANSAÇÃO
     await supabase.from('transactions').insert({
       user_id: user.id,
-      amount: numericAmount,
+      amount,
       type: 'withdrawal',
-      status: 'pending', // Fica pendente até o webhook confirmar
+      status: 'pending',
       external_id: result.id,
-      description: `Saque PIX (${mappedType})`
+      description: 'Saque PIX'
     })
 
-    return new Response(JSON.stringify({ success: true, transferId: result.id }), { status: 200, headers: corsHeaders })
+    return new Response(JSON.stringify({
+      success: true,
+      transferId: result.id
+    }), {
+      status: 200,
+      headers: corsHeaders
+    })
 
   } catch (err: any) {
-    console.error("Erro Fatal na Função:", err.message)
-    return new Response(JSON.stringify({ error: 'Ocorreu um erro interno. Tente novamente.' }), { status: 500, headers: corsHeaders })
+    console.error("💥 Erro geral:", err.message)
+
+    return new Response(JSON.stringify({
+      error: 'Erro interno'
+    }), {
+      status: 500,
+      headers: corsHeaders
+    })
   }
 })
