@@ -662,31 +662,30 @@ async function handleResetPassword() {
   }
 //linkpool
 async function buscarPoolPorId(poolId: string) {
-  const { data, error } = await supabase
-    .from('pools')
-    .select(`*, profiles:user_id (reputation, nickname), pool_options (*, bets (amount, user_id))`)
-    .eq('id', poolId)
-    .single();
+  try {
+    const { data, error } = await supabase
+      .from('pools')
+      .select(`*, profiles:user_id (reputation, nickname), pool_options (*, bets (amount, user_id))`)
+      .eq('id', poolId)
+      .single();
 
-  if (error) {
-    console.error("Erro ao buscar pool:", error.message);
-    return;
+    if (error) {
+      console.error("Erro ao buscar pool:", error.message);
+      buscarPools(); // fallback
+      return;
+    }
+
+    if (data) {
+      setPools([data]);
+    } else {
+      buscarPools();
+    }
+
+  } catch (err) {
+    console.error("Erro geral:", err);
+    buscarPools();
   }
-
-  if (data) setPools([data]); // importante: vira um array
 }
-
-useEffect(() => {
-  const params = new URLSearchParams(window.location.search);
-  const poolId = params.get("poolId");
-
-  if (poolId) {
-    buscarPoolPorId(poolId); // mostra só a pool compartilhada
-  } else {
-    buscarPools(); // fluxo normal do feed
-  }
-}, []);
-
   
   //linkpool
   async function buscarPools() {
