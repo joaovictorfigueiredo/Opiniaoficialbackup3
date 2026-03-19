@@ -73,6 +73,23 @@ const [tipoChavePix, setTipoChavePix] = useState('CPF');
   const [abaAtiva, setAbaAtiva] = useState('Explorar');
   const [perfilAberto, setPerfilAberto] = useState<any>(null);
   const [poolsDoCriador, setPoolsDoCriador] = useState<any[]>([]);
+
+// ================== LINK COMPARTILHADO ==================
+useEffect(() => {
+  const path = window.location.pathname;
+
+  // exemplo: site.com/quem-vai-ganhar-o-jogo-1700000000000
+  const slug = path.replace("/", "");
+
+  if (slug) {
+    buscarPoolPorSlug(slug);
+  } else {
+    buscarPools();
+  }
+}, []);
+
+
+  
   const [ranking, setRanking] = useState([]);
   const [justificativa, setJustificativa] = useState('');
   const [confirmacaoEncerramento, setConfirmacaoEncerramento] = useState<any>({
@@ -114,6 +131,11 @@ const [dadosPix, setDadosPix] = useState<{imagem: string, payload: string} | nul
 //captcha de acesso
 const [captchaToken, setCaptchaToken] = useState(null);
 const [modo, setModo] = useState<'login' | 'recuperar'>('login');
+
+
+//linkpool
+  const link = `${window.location.origin}/?poolId=${pool.id}`
+//linkpool
 
 
 const [isModalRankingOpen, setIsModalRankingOpen] = useState(false);
@@ -630,7 +652,35 @@ async function handleResetPassword() {
       console.error("Erro ao buscar saldos pendentes:", error);
     }
   }
+//linkpool
+async function buscarPoolPorId(poolId) {
+  const { data, error } = await supabase
+    .from('pools')
+    .select(`*, profiles:user_id (reputation, nickname), pool_options (*, bets (amount, user_id))`)
+    .eq('id', poolId)
+    .single();
 
+  if (error) {
+    console.error("Erro ao buscar pool:", error.message);
+    return;
+  }
+
+  if (data) setPools([data]); // importante: vira um array
+}
+
+useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+  const poolId = params.get("poolId");
+
+  if (poolId) {
+    buscarPoolPorId(poolId); // mostra só a pool compartilhada
+  } else {
+    buscarPools(); // fluxo normal do feed
+  }
+}, []);
+
+  
+  //linkpool
   async function buscarPools() {
   // 1. Base da query idêntica à sua
   let query = supabase
@@ -1320,16 +1370,14 @@ async function handleResetPassword() {
 
             {/* BOTÃO DE COMPARTILHAR CORRIGIDO */}
             <button 
-              onClick={() => {
-                const link = `${window.location.origin}/${pool.slug}`; // USANDO pool.slug
-                navigator.clipboard.writeText(link);
-                toast.error("Link da aposta copiado! Mande nos grupos de WhatsApp 🚀");
-              }}
-              className="flex items-center gap-1 text-[8px] font-black text-[#25D366] hover:brightness-125 transition-all uppercase tracking-tighter cursor-pointer"
-            >
-              <span className="w-1 h-1 bg-[#25D366]/30 rounded-full"></span>
-              Compartilhar
-            </button>
+  onClick={() => {
+    const link = `${window.location.origin}/?poolId=${pool.id}`;
+    navigator.clipboard.writeText(link);
+    toast.success("Link da aposta copiado! 🚀");
+  }}
+>
+  Compartilhar
+</button>
             
             <span className="text-[7px] text-gray-800 font-mono uppercase tracking-widest opacity-50">
               #{pool.id.slice(0, 8)}
