@@ -984,8 +984,34 @@ async function handleResetPassword() {
 
     
     <div className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center p-6">
+
+{/* 2. ESTE É O NOVO CONTÊINER DA CHUVA DE DINHEIRO (5 notas, 5 moedas) */}
+  <div className="money-rain-container">
+    <div className="bill"></div>
+    <div className="bill"></div>
+    <div className="bill"></div>
+    <div className="bill"></div>
+    <div className="bill"></div>
+    <div className="coin"></div>
+    <div className="coin"></div>
+    <div className="coin"></div>
+    <div className="coin"></div>
+    <div className="coin"></div>
+  </div>
+
+
+
+
+
+
+
+
+
+      
       <div className="max-w-md w-full bg-[#1e293b] p-8 rounded-3xl border border-gray-800 shadow-2xl">
         <h1 className="text-4xl font-black mb-8 text-center text-[#10b981]">Opinia</h1>
+
+        
         
         <div className="space-y-4">
           {/* Campo de e-mail comum a todos os modos */}
