@@ -123,14 +123,4 @@ html, body {
   
 }
 
-#root > div.min-h-screen.bg-\[\#0f172a\].text-white.flex.items-center.justify-center.p-6{
 
-background-image: url('https://i.imgur.com/d5IVB3E.gif'); /* Sua imagem/gif */
-  background-size: cover!important;      /* Faz a imagem cobrir a tela inteira */
-  background-position: center!important; /* Centraliza a imagem */
-  background-repeat: no-repeat!important; /* Impede que a imagem fique duplicada */
-  background-attachment: fixed!important; /* Opcional: mantém o fundo parado ao rolar */
-  min-height: 100vh!important;           /* Garante que o fundo tenha no mínimo a altura da tela */
-  width: 100%!important;
-  
-}
