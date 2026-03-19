@@ -1128,35 +1128,30 @@ if (!user) {
   );
 }
 
-
+// Se existir uma pool vinda do link, o React para aqui e mostra a página especial
   if (poolDoLink) {
+    return (
+      <PaginaDaPool 
+        pool={poolDoLink}
+        agora={agora}
+        calcularDadosPool={calcularDadosPool}
+        aoClicarEmApostar={(opcao, pool) => {
+          setSelectedOption(opcao);
+          setSelectedPool(pool);
+          setIsModalOpen(true);
+        }}
+        voltarParaOFeed={() => {
+          setPoolDoLink(null);
+          window.history.pushState({}, '', '/');
+        }}
+      />
+    );
+  }
+
+  // Se não tiver pool no link, ele pula o código acima e executa o return abaixo normalmente
   return (
-<div className="min-h-screen bg-[#0f172a] text-white p-4 md:p-8 font-sans">
-    {/* SE TIVER UMA POOL NO LINK, MOSTRA SÓ ELA */}
-    {poolDestaqueUnica ? (
-    <PaginaDaPool 
-      pool={poolDoLink}
-      agora={new Date()}
-      calcularDadosPool={calcularDadosPool} // Use a mesma função que você já tinha
-      aoClicarEmApostar={(opcao, pool) => {
-        // Aqui você abre o seu modal de login ou redireciona para depósito
-        setSelectedOption(opcao);
-        setSelectedPool(pool);
-        setIsModalOpen(true);
-      }}
-      voltarParaOFeed={() => setPoolDoLink(null)} // Limpa o estado e volta pro feed
-    />
-
-
-
-
-
-
-
-
-
-    
-    
+    <div className="min-h-screen bg-[#0f172a] text-white p-4 md:p-8 font-sans">
+      
       <div className=" mx-auto flex flex-col lg:flex-row gap-10">
         
 
@@ -2243,11 +2238,6 @@ if (!user) {
   </div>
 )}
 
-    </>
-    )}
-
-  </div>
-);
     </div>
   )
 }
