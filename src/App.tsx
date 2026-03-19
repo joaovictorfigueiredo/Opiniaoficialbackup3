@@ -1112,37 +1112,7 @@ if (!user) {
   );
 }
 
-if (poolDoLink && poolDoLink.id) {
-  try {
-    return (
-      <div className="min-h-screen bg-[#0f172a] text-white">
-        <PaginaDaPool 
-          pool={poolDoLink}
-          agora={agora}
-          // ... suas outras props
-        />
-      </div>
-    );
-  } catch (error) {
-    console.error("Erro na PaginaDaPool:", error);
-    setPoolDoLink(null); // Reseta para o feed se der erro
-    return null;
-  }
-}
-const compartilharDesafio = (pool) => {
-  const url = `${window.location.origin}${window.location.pathname}?id=${pool.id}`;
-  
-  if (navigator.share) {
-    navigator.share({
-      title: 'Desafio Opiniao Oficial',
-      text: `Você aceita o desafio: ${pool.title}?`,
-      url: url,
-    });
-  } else {
-    navigator.clipboard.writeText(url);
-    alert("Link de desafio copiado!");
-  }
-};
+
   
   // Se não tiver pool no link, ele pula o código acima e executa o return abaixo normalmente
   return (
