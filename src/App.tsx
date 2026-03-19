@@ -74,20 +74,6 @@ const [tipoChavePix, setTipoChavePix] = useState('CPF');
   const [perfilAberto, setPerfilAberto] = useState<any>(null);
   const [poolsDoCriador, setPoolsDoCriador] = useState<any[]>([]);
 
-// ================== LINK COMPARTILHADO ==================
-useEffect(() => {
-  const path = window.location.pathname;
-
-  // exemplo: site.com/quem-vai-ganhar-o-jogo-1700000000000
-  const slug = path.replace("/", "");
-
-  if (slug) {
-    buscarPoolPorSlug(slug);
-  } else {
-    buscarPools();
-  }
-}, []);
-
 
   
   const [ranking, setRanking] = useState([]);
