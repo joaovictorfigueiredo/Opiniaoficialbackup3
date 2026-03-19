@@ -62,7 +62,7 @@ const [tipoChavePix, setTipoChavePix] = useState('CPF');
   const [perfilAberto, setPerfilAberto] = useState<any>(null);
   const [poolsDoCriador, setPoolsDoCriador] = useState<any[]>([]);
 
-
+const [showLogin, setShowLogin] = useState(false)
   
   const [ranking, setRanking] = useState([]);
   const [justificativa, setJustificativa] = useState('');
@@ -977,7 +977,7 @@ async function handleResetPassword() {
 
   
   
- if (!user) {
+if (!user && showLogin) {
   return (
     
 
@@ -1291,7 +1291,13 @@ async function handleResetPassword() {
 </div>
 
 <button
-  onClick={criarPool}
+  onClick={() => {
+  if (!user) {
+    setShowLogin(true)
+    return
+  }
+  criarPool()
+}}
   disabled={isActionLoading}
   className={`w-full p-5 rounded-2xl font-black text-[#0f172a] text-lg transition-all ${
     isActionLoading ? 'bg-gray-600 cursor-not-allowed opacity-50' : 'bg-[#10b981] hover:opacity-90'
@@ -1461,6 +1467,10 @@ async function handleResetPassword() {
                             <button
                               disabled={estaBloqueado}
                               onClick={() => {
+                                if (!user) {
+                                  setShowLogin(true)
+                                  return
+                                }
                                 setSelectedOption(option);
                                 setSelectedPool(pool);
                                 setIsModalOpen(true);
@@ -1602,7 +1612,13 @@ async function handleResetPassword() {
               </div>
 
               <div className="flex flex-col gap-2">
-                <button onClick={() => setIsModalTransacaoOpen('deposito')} className="w-full bg-[#10b981] text-[#0f172a] text-[10px] font-black py-3 rounded-xl uppercase">Depositar</button>
+                <button onClick={() => setIsModalTransacaoOpen('deposito')}onClick={() => {
+  if (!user) {
+    setShowLogin(true)
+    return
+  }
+  setIsModalTransacaoOpen('deposito')
+}} className="w-full bg-[#10b981] text-[#0f172a] text-[10px] font-black py-3 rounded-xl uppercase">Depositar</button>
                 <button onClick={() => setIsModalTransacaoOpen('saque')} className="w-full bg-gray-800 text-white text-[10px] font-black py-3 rounded-xl uppercase">Sacar</button>
               </div>
 
