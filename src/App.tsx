@@ -979,25 +979,7 @@ async function handleResetPassword() {
   
 if (!user) {
   return (
-     <div className="min-h-screen bg-[#0f172a] relative">
-
-      {/* ===== PLATAFORMA NO FUNDO ===== */}
-      <div className="opacity-30 pointer-events-none">
-        {renderPlataforma()}
-      </div>
-
-      {/* ===== LOGIN POR CIMA ===== */}
-      <div className="absolute inset-0 flex items-center justify-center p-6">
-        <div className="max-w-md w-full bg-[#1e293b] p-8 rounded-3xl border border-gray-800 shadow-2xl">
-          {/* aqui fica exatamente o seu login sem mudar nada */}
-        </div>
-      </div>
-
-    </div>
-  )
-}
-
-
+     
     
     <div className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center p-6">
 
@@ -1127,6 +1109,34 @@ if (!user) {
   );
 }
   return (
+
+<div className="min-h-screen bg-[#0f172a] relative">
+
+      {/* ===== PLATAFORMA NO FUNDO ===== */}
+      <div className="opacity-30 pointer-events-none">
+        {renderPlataforma()}
+      </div>
+
+      {/* ===== LOGIN POR CIMA ===== */}
+      <div className="absolute inset-0 flex items-center justify-center p-6">
+        <div className="max-w-md w-full bg-[#1e293b] p-8 rounded-3xl border border-gray-800 shadow-2xl">
+          {/* aqui fica exatamente o seu login sem mudar nada */}
+        </div>
+      </div>
+
+    </div>
+  )
+}
+
+
+
+
+
+
+
+
+
+    
     <div className="min-h-screen bg-[#0f172a] text-white p-4 md:p-8 font-sans">
       <div className=" mx-auto flex flex-col lg:flex-row gap-10">
         
