@@ -138,7 +138,7 @@ const handleVerPoolsAtivas = (id: string, nick: string) => {
   // Escuta mudanças na URL (útil se você navegar internamente)
   useEffect(() => {
     const handleLocationChange = () => {
-      setCurrentPath(window.location.pathname);
+      setRotaAtual(window.location.pathname);
     };
 
     window.addEventListener('popstate', handleLocationChange);
