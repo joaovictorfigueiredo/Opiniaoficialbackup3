@@ -14,6 +14,7 @@ import { FunctionsHttpError } from '@supabase/supabase-js';
 import { Turnstile } from '@marsidev/react-turnstile';
 import AtualizarSenha from './atualizar-senha';
 import { toast } from 'react-hot-toast';
+import FavoriteButton from './components/FavoriteButton';
 
 // --- TIPOS ---
 type AbaType = 'explorar' | 'minhas_apostas' | 'criadas_por_mim';
@@ -443,6 +444,22 @@ if (data && data.encodedImage) {
 
     buscarPools()
     buscarRanking()
+
+
+    const { data, error } = await supabase
+  .from('favorites')
+  .select(`
+    id,
+    profiles:favorite_profile_id (
+      nickname,
+      avatar_url
+    )
+  `)
+  .eq('user_id', seu_id_logado);
+
+
+
+    
 
     const channel = supabase
       .channel('schema-db-changes')
@@ -2143,6 +2160,25 @@ async function handleResetPassword() {
     </div>
   </div>
 )}
+
+      // ... dentro do seu map de usuários encontrados:
+{usuarios.map((usuario) => (
+  <div key={usuario.id} className="p-4 border rounded flex justify-between items-center">
+    <div>
+      <p className="font-bold">{usuario.nickname}</p>
+      <p className="text-sm text-gray-500">@{usuario.username}</p>
+    </div>
+    
+    <div className="flex gap-2">
+      {/* AQUI VOCÊ CHAMA O COMPONENTE */}
+      <FavoriteButton targetProfileId={usuario.id} />
+      
+      <button className="bg-blue-500 text-white px-3 py-1 rounded">
+        Enviar Pix
+      </button>
+    </div>
+  </div>
+))}
 
     </div>
   )
