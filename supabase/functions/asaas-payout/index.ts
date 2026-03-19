@@ -24,33 +24,28 @@ serve(async (req) => {
     const { amount, pixKey } = await req.json()
     const numericAmount = parseFloat(amount)
 
-    // 1. IDENTIFICAÇÃO AUTOMÁTICA DO TIPO DE CHAVE (O Asaas exige isso)
+    // 1. IDENTIFICAÇÃO AUTOMÁTICA DO TIPO DE CHAVE
     let cleanPixKey = pixKey.trim();
     let pixType = "";
 
+    const digits = cleanPixKey.replace(/\D/g, '');
+    
     if (cleanPixKey.includes('@')) {
       pixType = "EMAIL";
-    } else if (cleanPixKey.replace(/\D/g, '').length === 11 && !cleanPixKey.includes('-')) {
-      // Se tem 11 dígitos e o usuário não formatou como CPF, checamos se é celular
-      // Mas a lógica mais segura é limpar tudo primeiro:
-      const digits = cleanPixKey.replace(/\D/g, '');
-      if (digits.length === 11) {
-          pixType = "CPF";
-          cleanPixKey = digits;
-      } else if (digits.length === 14) {
-          pixType = "CNPJ";
-          cleanPixKey = digits;
-      } else if (digits.length >= 10 && digits.length <= 13) {
-          pixType = "PHONE";
-          cleanPixKey = digits.startsWith('55') ? '+' + digits : '+55' + digits;
-      } else {
-          pixType = "EVP"; // Chave aleatória
-      }
+    } else if (digits.length === 11) {
+      pixType = "CPF";
+      cleanPixKey = digits;
+    } else if (digits.length === 14) {
+      pixType = "CNPJ";
+      cleanPixKey = digits;
+    } else if (digits.length >= 10 && digits.length <= 13) {
+      pixType = "PHONE";
+      cleanPixKey = digits.startsWith('55') ? '+' + digits : '+55' + digits;
     } else {
       pixType = "EVP"; 
     }
 
-    // 💰 2. Reserva saldo no Supabase
+    // 💰 2. Reserva saldo no Supabase (RPC que você já tem)
     const { data: ok, error: rpcError } = await supabase.rpc('solicitar_saque_seguro', {
       p_user_id: user.id,
       p_amount: numericAmount
@@ -60,7 +55,7 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Saldo insuficiente ou erro no banco' }), { status: 400, headers: corsHeaders })
     }
 
-    // 🚀 3. ENVIO PARA O ASAAS COM TRATAMENTO DE ERRO TOTAL
+    // 🚀 3. ENVIO PARA O ASAAS
     try {
       const asaasRes = await fetch('https://www.asaas.com/api/v3/transfers', {
         method: 'POST',
@@ -72,7 +67,7 @@ serve(async (req) => {
         body: JSON.stringify({
           value: numericAmount,
           pixAddressKey: cleanPixKey,
-          pixAddressKeyType: pixType, // DADO QUE ESTAVA FALTANDO
+          pixAddressKeyType: pixType,
           operationType: 'PIX',
           description: `Saque - User ${user.id}`,
           externalReference: user.id
@@ -83,18 +78,31 @@ serve(async (req) => {
 
       if (!asaasRes.ok) {
         console.error("Asaas Recusou:", result);
-        // 🔄 ESTORNO: Se o Asaas recusar (erro 400, 401, 500), devolvemos o dinheiro
-        await supabase.rpc('estornar_saque_erro', { 
-          p_user_id: user.id, 
-          p_amount: numericAmount 
-        });
-        
+        await supabase.rpc('estornar_saque_erro', { p_user_id: user.id, p_amount: numericAmount });
         return new Response(JSON.stringify({ 
           error: result.errors?.[0]?.description || 'O Asaas recusou a transferência.' 
         }), { status: 400, headers: corsHeaders })
       }
 
-      // ✅ 4. SUCESSO: Registra na tabela de transações
+      // 🔐 4. PASSO ESSENCIAL: PRÉ-AUTORIZAÇÃO PARA O WEBHOOK (SMS ZERO)
+      // Aqui salvamos o ID para que a função 'asaas-security-validation' possa aprovar o saque
+      const { error: authErrorDb } = await supabase
+        .from('saques_autorizados')
+        .insert([
+          { 
+            asaas_id: result.id, 
+            valor: numericAmount,
+            status: 'AUTHORIZED' 
+          }
+        ]);
+
+      if (authErrorDb) {
+        console.error("Erro ao registrar pré-autorização:", authErrorDb);
+        // Nota: Não paramos o fluxo aqui, pois o saque já foi criado no Asaas. 
+        // Mas se falhar aqui, o webhook pode recusar o saque por não achar o registro.
+      }
+
+      // ✅ 5. SUCESSO: Registra na tabela de transações do usuário
       await supabase.from('transactions').insert({
         user_id: user.id,
         amount: numericAmount,
@@ -104,10 +112,13 @@ serve(async (req) => {
         description: `Saque PIX (${pixType})`
       })
 
-      return new Response(JSON.stringify({ success: true, transferId: result.id }), { status: 200, headers: corsHeaders })
+      return new Response(JSON.stringify({ 
+        success: true, 
+        transferId: result.id,
+        message: "Saque solicitado e pré-autorizado com sucesso."
+      }), { status: 200, headers: corsHeaders })
 
     } catch (fetchError) {
-      // 🔄 ESTORNO: Se a internet cair ou o fetch falhar, devolvemos o dinheiro
       await supabase.rpc('estornar_saque_erro', { p_user_id: user.id, p_amount: numericAmount });
       throw fetchError;
     }
