@@ -689,6 +689,22 @@ async function buscarPoolPorId(poolId: string) {
     buscarPools();
   }
 }
+
+// Exemplo de busca rápida por Nickname
+async function buscarPorNickname(nomeDigitado) {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('id, nickname, avatar_url') // Pega o ID e o Nickname
+    .ilike('nickname', `%${nomeDigitado}%`) // O 'ilike' ignora se é maiúsculo ou minúsculo
+    .limit(5);
+
+  if (error) {
+    console.error("Erro na busca:", error.message);
+    return [];
+  }
+  return data;
+}
+
   
   //linkpool
   async function buscarPools() {
@@ -1379,13 +1395,13 @@ async function buscarPoolPorId(poolId: string) {
             </button>
 
             {/* BOTÃO DE COMPARTILHAR CORRIGIDO */}
-           <button 
+          <button 
   onClick={() => {
     const link = `${window.location.origin}/?poolId=${pool.id}`;
     navigator.clipboard.writeText(link);
     toast.success("Link da pool copiado! 🚀");
+    window.open(link, '_blank'); // abre a pool em nova aba
   }}
-  className="flex items-center gap-1 text-[8px] font-black text-[#25D366] hover:brightness-125 transition-all uppercase tracking-tighter cursor-pointer"
 >
   Compartilhar
 </button>
