@@ -446,16 +446,7 @@ if (data && data.encodedImage) {
     buscarRanking()
 
 
-    const { data, error } = await supabase
-  .from('favorites')
-  .select(`
-    id,
-    profiles:favorite_profile_id (
-      nickname,
-      avatar_url
-    )
-  `)
-  .eq('user_id', seu_id_logado);
+    
 
 
 
