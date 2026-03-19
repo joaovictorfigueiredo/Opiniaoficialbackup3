@@ -1148,6 +1148,30 @@ if (!user) {
     );
   }
 
+
+const compartilharDesafio = (pool: any) => {
+  // A URL que o seu sistema agora reconhece
+  const urlLink = `https://opiniaoficial.com.br/p/${pool.id}`;
+  
+  // Mensagem personalizada para atrair o clique
+  const textoBase = `🔥 DESAFIO NO OPINIÃO OFICIAL!\n\n"${pool.title.toUpperCase()}"\n\nO pote atual está em R$ ${pool.totalPote || '0,00'}.\n\nE aí, qual seu palpite? Dê o seu aqui:`;
+  
+  const mensagemWhatsapp = encodeURIComponent(`${textoBase}\n${urlLink}`);
+  const whatsappUrl = `https://wa.me/?text=${mensagemWhatsapp}`;
+
+  // Tenta usar a função nativa de compartilhar do celular (mais moderno)
+  if (navigator.share) {
+    navigator.share({
+      title: 'Desafio Opiniao Oficial',
+      text: textoBase,
+      url: urlLink,
+    }).catch(() => window.open(whatsappUrl, '_blank')); // Se der erro ou cancelar, abre o Zap
+  } else {
+    // Se for no PC ou navegador antigo, abre direto o WhatsApp
+    window.open(whatsappUrl, '_blank');
+  }
+};
+  
   // Se não tiver pool no link, ele pula o código acima e executa o return abaixo normalmente
   return (
     <div className="min-h-screen bg-[#0f172a] text-white p-4 md:p-8 font-sans">
@@ -1392,6 +1416,25 @@ if (!user) {
               <span className="w-1 h-1 bg-red-500/30 rounded-full"></span>
               Denunciar
             </button>
+
+            <button
+  onClick={() => compartilharDesafio(pool)}
+  className="flex items-center gap-2 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 px-5 py-2.5 rounded-2xl transition-all active:scale-95 group"
+>
+  {/* Ícone de Compartilhar/WhatsApp */}
+  <svg 
+    className="w-4 h-4 text-emerald-500 group-hover:rotate-12 transition-transform" 
+    fill="none" 
+    stroke="currentColor" 
+    viewBox="0 0 24 24"
+  >
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 100-2.684 3 3 0 000 2.684zm0 9.368a3 3 0 100-2.684 3 3 0 000 2.684z" />
+  </svg>
+  
+  <span className="text-emerald-500 text-xs font-black uppercase tracking-wider">
+    Desafiar Amigo
+  </span>
+</button>
       
             <span className="text-[7px] text-gray-800 font-mono uppercase tracking-widest opacity-50">
               #{pool.id.slice(0, 8)}
