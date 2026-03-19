@@ -15,21 +15,8 @@ import { Turnstile } from '@marsidev/react-turnstile';
 import AtualizarSenha from './atualizar-senha';
 import { toast } from 'react-hot-toast';
 
-
-
-
-
-
-
-
 // --- TIPOS ---
 type AbaType = 'explorar' | 'minhas_apostas' | 'criadas_por_mim';
-
-
-
-
-
-
 
 
 function App() {
@@ -119,11 +106,6 @@ const [captchaToken, setCaptchaToken] = useState(null);
 const [modo, setModo] = useState<'login' | 'recuperar'>('login');
 
 
-//linkpool
-  
-//linkpool
-
-
 const [isModalRankingOpen, setIsModalRankingOpen] = useState(false);
 const [isCarteiraMobileAberta, setIsCarteiraMobileAberta] = useState(false);
 
@@ -134,29 +116,6 @@ const dispararDenuncia = (poolId: string) => {
   setDenunciaInfo({ aberto: true, poolId });
 };
 const [textoDenuncia, setTextoDenuncia] = useState('');
-
-
-// ================== linkpool COMPARTILHADO ==================
-useEffect(() => {
-  const carregar = async () => {
-    try {
-      const params = new URLSearchParams(window.location.search);
-      const poolId = params.get("poolId");
-
-      if (poolId !== null && poolId !== "") {
-        await buscarPoolPorId(poolId);
-      } else {
-        await buscarPools();
-      }
-
-    } catch (e) {
-      console.error("Erro ao carregar pools:", e);
-      await buscarPools();
-    }
-  };
-
-  carregar();
-}, []);
 
 
 
@@ -663,32 +622,7 @@ async function handleResetPassword() {
       console.error("Erro ao buscar saldos pendentes:", error);
     }
   }
-//linkpool
-async function buscarPoolPorId(poolId: string) {
-  try {
-    const { data, error } = await supabase
-      .from('pools')
-      .select(`*, profiles:user_id (reputation, nickname), pool_options (*, bets (amount, user_id))`)
-      .eq('id', poolId)
-      .single();
 
-    if (error) {
-      console.error("Erro ao buscar pool:", error.message);
-      buscarPools(); // fallback
-      return;
-    }
-
-    if (data) {
-      setPools([data]);
-    } else {
-      buscarPools();
-    }
-
-  } catch (err) {
-    console.error("Erro geral:", err);
-    buscarPools();
-  }
-}
 
 // Exemplo de busca rápida por Nickname
 async function buscarPorNickname(nomeDigitado) {
@@ -706,7 +640,6 @@ async function buscarPorNickname(nomeDigitado) {
 }
 
   
-  //linkpool
   async function buscarPools() {
   // 1. Base da query idêntica à sua
   let query = supabase
