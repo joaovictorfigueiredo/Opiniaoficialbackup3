@@ -980,15 +980,8 @@ async function handleResetPassword() {
 if (!user) {
   return (
      
+    <div className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center p-6">
     
-    
-      /* Adicione o evento de mouse na div pai para o parallax funcionar no PC */
-  <div onMouseMove={handleMouseMove} className="min-h-screen relative overflow-hidden">
-    
-    {/* ESTE BLOCO CHAMA O CSS QUE VOCÊ COLOCOU */}
-    <div className="parallax-bg-container">
-      <div className="parallax-dashboard"></div>
-    </div>
      
 {/* 2. ESTE É O NOVO CONTÊINER DA CHUVA DE DINHEIRO (5 notas, 5 moedas) */}
   <div className="money-rain-container">
