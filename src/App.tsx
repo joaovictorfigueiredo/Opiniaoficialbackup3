@@ -120,6 +120,8 @@ const dispararDenuncia = (poolId: string) => {
 const [textoDenuncia, setTextoDenuncia] = useState('');
 
 const [poolDoLink, setPoolDoLink] = useState<any>(null);
+const [poolDestaqueUnica, setPoolDestaqueUnica] = useState<any>(null);
+const [carregandoPoolUnica, setCarregandoPoolUnica] = useState(false);
 
   
   // Isso vai fazer o React "acordar" a cada segundo e re-checar os botões
@@ -136,6 +138,21 @@ const handleVerPoolsAtivas = (id: string, nick: string) => {
   setUsuarioDestaque({ id, nickname: nick });
 }
 
+
+// Este código lê a URL quando o site carrega
+useEffect(() => {
+  const path = window.location.pathname; // Pega o que vem depois da barra /
+  
+  // Se a URL for algo como /p/id-da-pool
+  if (path.startsWith('/p/')) {
+    const idPool = path.replace('/p/', '');
+    if (idPool) {
+      buscarPoolEspecifica(idPool);
+    }
+  }
+}, []);
+
+  
   // Escuta mudanças na URL (útil se você navegar internamente)
   useEffect(() => {
     const handleLocationChange = () => {
@@ -1114,6 +1131,9 @@ if (!user) {
 
   if (poolDoLink) {
   return (
+<div className="min-h-screen bg-[#0f172a] text-white p-4 md:p-8 font-sans">
+    {/* SE TIVER UMA POOL NO LINK, MOSTRA SÓ ELA */}
+    {poolDestaqueUnica ? (
     <PaginaDaPool 
       pool={poolDoLink}
       agora={new Date()}
@@ -1136,7 +1156,7 @@ if (!user) {
 
 
     
-    <div className="min-h-screen bg-[#0f172a] text-white p-4 md:p-8 font-sans">
+    
       <div className=" mx-auto flex flex-col lg:flex-row gap-10">
         
 
@@ -2223,7 +2243,11 @@ if (!user) {
   </div>
 )}
 
-    
+    </>
+    )}
+
+  </div>
+);
     </div>
   )
 }
