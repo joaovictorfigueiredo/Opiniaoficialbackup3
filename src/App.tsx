@@ -1170,11 +1170,7 @@ const compartilharDesafio = (pool) => {
           <RankingSide ranking={ranking} />
         </aside>
 
-        {/* COLUNA PRINCIPAL */}
-<div className="flex-1 space-y-10">
-  <div className="flex justify-between items-center">
-    <h1 className="text-3xl font-black text-[#10b981] italic tracking-tighter uppercase">OPINIA.</h1>
-
+        
 <div className="mb-10 w-full max-w-4xl mx-auto">
   <div className="relative group">
     <input 
@@ -1198,10 +1194,11 @@ const compartilharDesafio = (pool) => {
 </div>
 
 
+        {/* COLUNA PRINCIPAL */}
+<div className="flex-1 space-y-10">
+  <div className="flex justify-between items-center">
+    <h1 className="text-3xl font-black text-[#10b981] italic tracking-tighter uppercase">OPINIA.</h1>
 
-
-    
-    
     <div className="flex items-center gap-2">
       {/* NOVO: BOTÃO DE PERFIL/CARTEIRA RÁPIDO (SÓ APARECE NO CELULAR) */}
       <button 
