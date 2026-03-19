@@ -977,7 +977,7 @@ async function handleResetPassword() {
 
   
   
-if (!user && modo === 'login' && pools.length === 0) {
+if (!user && '') {
   return (
     
 
