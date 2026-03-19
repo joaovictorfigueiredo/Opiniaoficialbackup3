@@ -1171,27 +1171,6 @@ const compartilharDesafio = (pool) => {
         </aside>
 
         
-<div className="mb-10 w-full max-w-4xl mx-auto">
-  <div className="relative group">
-    <input 
-      type="text"
-      placeholder="COLE O #ID DO DESAFIO AQUI PARA BUSCAR..."
-      className="w-full bg-[#1e293b] p-5 rounded-[24px] border border-gray-800 text-xs font-black uppercase tracking-widest outline-none transition-all focus:border-[#10b981] focus:ring-1 focus:ring-[#10b981]/20 text-white placeholder:text-gray-700 shadow-2xl"
-      onChange={(e) => {
-        const busca = e.target.value.trim();
-        if (busca.length > 5) {
-          const encontrada = pools.filter(p => p.id.includes(busca));
-          if (encontrada.length > 0) setPoolsFiltradas(encontrada);
-        } else if (busca.length === 0) {
-          setPoolsFiltradas(pools); // Reseta a lista se apagar o campo
-        }
-      }}
-    />
-    <div className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 group-focus-within:text-[#10b981] transition-colors">
-      <Search size={18} />
-    </div>
-  </div>
-</div>
 
 
         {/* COLUNA PRINCIPAL */}
