@@ -982,11 +982,7 @@ if (!user) {
      
     
     <div className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center p-6">
-      {/* ===== PLATAFORMA NO FUNDO ===== */}
-      <div className="opacity-30 pointer-events-none">
-        {renderPlataforma()}
-      </div>
-
+     
 {/* 2. ESTE É O NOVO CONTÊINER DA CHUVA DE DINHEIRO (5 notas, 5 moedas) */}
   <div className="money-rain-container">
     <div className="bill"></div>
