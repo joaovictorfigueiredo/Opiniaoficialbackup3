@@ -1108,7 +1108,7 @@ if (!user) {
     </div>
   );
 }
-  return (
+
 
 <div className="min-h-screen bg-[#0f172a] relative">
 
@@ -1127,6 +1127,13 @@ if (!user) {
     </div>
   )
 }
+
+
+
+
+
+  
+  return (
 
 
 
