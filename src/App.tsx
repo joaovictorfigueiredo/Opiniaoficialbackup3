@@ -1136,26 +1136,36 @@ if (!user) {
   );
 }
 
-// Se existir uma pool vinda do link, o React para aqui e mostra a página especial
+// --- INÍCIO DA CORREÇÃO ---
   if (poolDoLink) {
     return (
-      <PaginaDaPool 
-        pool={poolDoLink}
-        agora={agora}
-        calcularDadosPool={calcularDadosPool}
-        aoClicarEmApostar={(opcao, pool) => {
-          setSelectedOption(opcao);
-          setSelectedPool(pool);
-          setIsModalOpen(true);
-        }}
-        voltarParaOFeed={() => {
-          setPoolDoLink(null);
-          window.history.pushState({}, '', '/');
-        }}
-      />
+      <div className="min-h-screen bg-[#0f172a] text-white">
+        {/* Trava de segurança: Se o ID ainda não carregou no estado, mostra loading */}
+        {!poolDoLink.id ? (
+          <div className="flex h-screen items-center justify-center font-black italic animate-pulse">
+            CARREGANDO DESAFIO...
+          </div>
+        ) : (
+          <PaginaDaPool 
+            pool={poolDoLink}
+            agora={agora}
+            calcularDadosPool={calcularDadosPool}
+            aoClicarEmApostar={(opcao, pool) => {
+              setSelectedOption(opcao);
+              setSelectedPool(pool);
+              setIsModalOpen(true);
+            }}
+            voltarParaOFeed={() => {
+              setPoolDoLink(null);
+              window.history.pushState({}, '', '/');
+              setRotaAtual('/'); // Atualiza o estado da rota
+            }}
+          />
+        )}
+      </div>
     );
-  }
-
+  } 
+  // --- FIM DA CORREÇÃO (O código abaixo segue normal para o feed) ---
 
 const compartilharDesafio = (pool: any) => {
   // A URL que o seu sistema agora reconhece
