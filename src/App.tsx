@@ -1405,6 +1405,14 @@ async function buscarPorNickname(nomeDigitado) {
 >
   Compartilhar
 </button>
+
+            {/* Estrelinha de favoritos */}
+  <button
+    onClick={() => toggleFavorito(usuario.id)}
+    className={`ml-2 text-yellow-400 ${favoritos.includes(usuario.id) ? 'opacity-100' : 'opacity-40'}`}
+  >
+    ★
+  </button>
             
             <span className="text-[7px] text-gray-800 font-mono uppercase tracking-widest opacity-50">
               #{pool.id.slice(0, 8)}
