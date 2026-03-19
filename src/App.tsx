@@ -624,20 +624,6 @@ async function handleResetPassword() {
   }
 
 
-// Exemplo de busca rápida por Nickname
-async function buscarPorNickname(nomeDigitado) {
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('id, nickname, avatar_url') // Pega o ID e o Nickname
-    .ilike('nickname', `%${nomeDigitado}%`) // O 'ilike' ignora se é maiúsculo ou minúsculo
-    .limit(5);
-
-  if (error) {
-    console.error("Erro na busca:", error.message);
-    return [];
-  }
-  return data;
-}
 
   
   async function buscarPools() {
