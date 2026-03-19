@@ -1112,37 +1112,23 @@ if (!user) {
   );
 }
 
-// --- INÍCIO DA CORREÇÃO ---
-  if (poolDoLink) {
+if (poolDoLink && poolDoLink.id) {
+  try {
     return (
       <div className="min-h-screen bg-[#0f172a] text-white">
-        {/* Trava de segurança: Se o ID ainda não carregou no estado, mostra loading */}
-        {!poolDoLink.id ? (
-          <div className="flex h-screen items-center justify-center font-black italic animate-pulse">
-            CARREGANDO DESAFIO...
-          </div>
-        ) : (
-          <PaginaDaPool 
-            pool={poolDoLink}
-            agora={agora}
-            calcularDadosPool={calcularDadosPool}
-            aoClicarEmApostar={(opcao, pool) => {
-              setSelectedOption(opcao);
-              setSelectedPool(pool);
-              setIsModalOpen(true);
-            }}
-            voltarParaOFeed={() => {
-              setPoolDoLink(null);
-              window.history.pushState({}, '', '/');
-              setRotaAtual('/'); // Atualiza o estado da rota
-            }}
-          />
-        )}
+        <PaginaDaPool 
+          pool={poolDoLink}
+          agora={agora}
+          // ... suas outras props
+        />
       </div>
     );
-  } 
-  // --- FIM DA CORREÇÃO (O código abaixo segue normal para o feed) ---
-
+  } catch (error) {
+    console.error("Erro na PaginaDaPool:", error);
+    setPoolDoLink(null); // Reseta para o feed se der erro
+    return null;
+  }
+}
 const compartilharDesafio = (pool) => {
   const url = `${window.location.origin}${window.location.pathname}?id=${pool.id}`;
   
