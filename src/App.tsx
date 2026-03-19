@@ -657,7 +657,7 @@ async function handleResetPassword() {
     }
   }
 //linkpool
-async function buscarPoolPorId(poolId) {
+async function buscarPoolPorId(poolId: string) {
   const { data, error } = await supabase
     .from('pools')
     .select(`*, profiles:user_id (reputation, nickname), pool_options (*, bets (amount, user_id))`)
@@ -1373,12 +1373,13 @@ useEffect(() => {
             </button>
 
             {/* BOTÃO DE COMPARTILHAR CORRIGIDO */}
-            <button 
+           <button 
   onClick={() => {
     const link = `${window.location.origin}/?poolId=${pool.id}`;
     navigator.clipboard.writeText(link);
-    toast.success("Link da aposta copiado! 🚀");
+    toast.success("Link da pool copiado! 🚀");
   }}
+  className="flex items-center gap-1 text-[8px] font-black text-[#25D366] hover:brightness-125 transition-all uppercase tracking-tighter cursor-pointer"
 >
   Compartilhar
 </button>
