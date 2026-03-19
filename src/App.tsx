@@ -119,9 +119,6 @@ const dispararDenuncia = (poolId: string) => {
 };
 const [textoDenuncia, setTextoDenuncia] = useState('');
 
-const [poolDoLink, setPoolDoLink] = useState<any>(null);
-const [poolDestaqueUnica, setPoolDestaqueUnica] = useState<any>(null);
-const [carregandoPoolUnica, setCarregandoPoolUnica] = useState(false);
 
   
   // Isso vai fazer o React "acordar" a cada segundo e re-checar os botões
@@ -137,23 +134,6 @@ const handleVerPoolsAtivas = (id: string, nick: string) => {
   // Aqui você usa o nome novo do estado
   setUsuarioDestaque({ id, nickname: nick });
 }
-
-
-useEffect(() => {
-  // 1. Pega o ID da URL
-  const params = new URLSearchParams(window.location.search);
-  const poolIdViaLink = params.get('id');
-
-  if (poolIdViaLink && pools.length > 0) {
-    // 2. Filtra a lista para mostrar apenas essa pool
-    const poolEncontrada = pools.find(p => p.id === poolIdViaLink);
-    if (poolEncontrada) {
-      setPoolsFiltradas([poolEncontrada]);
-      // Opcional: faz scroll até ela
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }
-}, [pools]); // Executa sempre que as pools forem carregadas
 
 
   
@@ -1195,7 +1175,27 @@ const compartilharDesafio = (pool) => {
   <div className="flex justify-between items-center">
     <h1 className="text-3xl font-black text-[#10b981] italic tracking-tighter uppercase">OPINIA.</h1>
 
-
+<div className="mb-10 w-full max-w-4xl mx-auto">
+  <div className="relative group">
+    <input 
+      type="text"
+      placeholder="COLE O #ID DO DESAFIO AQUI PARA BUSCAR..."
+      className="w-full bg-[#1e293b] p-5 rounded-[24px] border border-gray-800 text-xs font-black uppercase tracking-widest outline-none transition-all focus:border-[#10b981] focus:ring-1 focus:ring-[#10b981]/20 text-white placeholder:text-gray-700 shadow-2xl"
+      onChange={(e) => {
+        const busca = e.target.value.trim();
+        if (busca.length > 5) {
+          const encontrada = pools.filter(p => p.id.includes(busca));
+          if (encontrada.length > 0) setPoolsFiltradas(encontrada);
+        } else if (busca.length === 0) {
+          setPoolsFiltradas(pools); // Reseta a lista se apagar o campo
+        }
+      }}
+    />
+    <div className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-700 group-focus-within:text-[#10b981] transition-colors">
+      <Search size={18} />
+    </div>
+  </div>
+</div>
 
 
 
@@ -1424,22 +1424,16 @@ const compartilharDesafio = (pool) => {
             </button>
 
             <button
-  onClick={() => compartilharDesafio(pool)}
-  className="flex items-center gap-2 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 px-5 py-2.5 rounded-2xl transition-all active:scale-95 group"
+  onClick={() => {
+    navigator.clipboard.writeText(pool.id);
+    alert("ID Copiado! Mande para seu amigo colar na busca.");
+  }}
+  className="flex items-center gap-2 bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-lg border border-white/5 transition-all group/id"
 >
-  {/* Ícone de Compartilhar/WhatsApp */}
-  <svg 
-    className="w-4 h-4 text-emerald-500 group-hover:rotate-12 transition-transform" 
-    fill="none" 
-    stroke="currentColor" 
-    viewBox="0 0 24 24"
-  >
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 100-2.684 3 3 0 000 2.684zm0 9.368a3 3 0 100-2.684 3 3 0 000 2.684z" />
-  </svg>
-  
-  <span className="text-emerald-500 text-xs font-black uppercase tracking-wider">
-    Desafiar Amigo
+  <span className="text-[7px] text-gray-500 font-mono uppercase tracking-widest group-hover/id:text-[#10b981]">
+    #{pool.id.slice(0, 8)}
   </span>
+  <Copy size={10} className="text-gray-700 group-hover/id:text-[#10b981]" />
 </button>
       
             <span className="text-[7px] text-gray-800 font-mono uppercase tracking-widest opacity-50">
