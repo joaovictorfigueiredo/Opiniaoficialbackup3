@@ -1612,14 +1612,10 @@ if (!user) {
               </div>
 
               <div className="flex flex-col gap-2">
-               <button onClick={() => {
-  if (!user) {
-    setShowLogin(true)
-    return
-  }
-  setIsModalTransacaoOpen('deposito')className="w-full bg-green-600 text-white text-lg font-bold p-4 rounded-xl"
+               <button
+  onClick={() => setIsModalTransacaoOpen('deposito')}
+  className="w-full bg-green-600 text-white text-lg font-bold p-4 rounded-xl"
 >
-}}>
   Depositar
 </button>
                 <button onClick={() => setIsModalTransacaoOpen('saque')} className="w-full bg-gray-800 text-white text-[10px] font-black py-3 rounded-xl uppercase">Sacar</button>
