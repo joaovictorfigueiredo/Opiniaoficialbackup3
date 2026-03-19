@@ -122,13 +122,57 @@ html, body {
   border-raduis: 10px;
   
 }
+/* No seu arquivo CSS (index.css ou similar) */
 
+/* 1. Seleciona a div principal do Login e limpa o fundo anterior */
 #root > div.min-h-screen {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://i.imgur.com/d5IVB3E.gif') !important;
-  background-size: cover !important;
-  background-position: center !important;
-  background-repeat: no-repeat !important;
-  background-attachment: fixed !important;
-  width: 100% !important;
-  min-height: 100vh !important;
+    position: relative;
+    overflow: hidden;
+    background-color: #030610 !important; /* Fundo quase preto para dar contraste */
+    min-height: 100vh;
+    width: 100%;
 }
+
+/* 2. Cria a animação de fundo - Efeito de grade digital P2P */
+#root > div.min-h-screen::before {
+    content: "";
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    top: -50%;
+    left: -50%;
+    
+    /* Grade suave */
+    background-image: 
+        linear-gradient(#0a0e1a 2px, transparent 2px),
+        linear-gradient(90deg, #0a0e1a 2px, transparent 2px);
+    background-size: 80px 80px; /* Tamanho da grade */
+    
+    /* Pontos de luz sutil nas intersecções (efeito P2P) */
+    mask-image: radial-gradient(circle, #fff, transparent 65%);
+    -webkit-mask-image: radial-gradient(circle, #fff, transparent 65%);
+    
+    /* Cor de luz de neon sutil (Verde Opinia) */
+    background-color: rgba(3, 114, 110, 0.05); /* Sutil para não ofuscar */
+    
+    /* Inicia a animação */
+    animation: p2pDataFlow 60s linear infinite;
+    z-index: 1;
+}
+
+/* 3. Garante que o formulário fique acima da animação */
+#root > div.min-h-screen > .login-container {
+    z-index: 10;
+    position: relative;
+}
+
+/* Definição do movimento lento do fundo */
+@keyframes p2pDataFlow {
+    from {
+        transform: translate(0, 0);
+    }
+    to {
+        transform: translate(-40px, -40px); /* Movimento diagonal lento */
+    }
+}
+
