@@ -1284,6 +1284,43 @@ async function handleResetPassword() {
   
   return (    
 
+{/* 1. MUDANÇA NA DIV PRINCIPAL: Adicionamos z-index e relative para a chuva de dinheiro funcionar atrás */}
+<div className="min-h-screen text-white flex items-center justify-center p-6 bg-transparent relative overflow-hidden z-10">
+  
+  {/* 2. ESTE É O NOVO CONTÊINER DA CHUVA DE DINHEIRO (5 notas, 5 moedas) */}
+  <div className="money-rain-container">
+    <div className="bill"></div>
+    <div className="bill"></div>
+    <div className="bill"></div>
+    <div className="bill"></div>
+    <div className="bill"></div>
+    <div className="coin"></div>
+    <div className="coin"></div>
+    <div className="coin"></div>
+    <div className="coin"></div>
+    <div className="coin"></div>
+  </div>
+
+  {/* 3. O SEU CARD DE LOGIN (Com backdrop-blur para dar o efeito de vidro) */}
+  <div className="max-w-md w-full bg-[#1e293b]/95 backdrop-blur-md p-10 rounded-[2.5rem] border border-gray-800 shadow-2xl text-center z-20 relative">
+    
+    {/* LOGO OPINIA EM VERDE/NEON */}
+    <h1 className="text-4xl font-black mb-2 text-[#10b981]">Opinia</h1>
+    
+    {/* O PITCH DE MARKETING: Combina com o visual de dinheiro */}
+    <p className="text-[10px] text-gray-400 mb-8 max-w-sm mx-auto tracking-[0.2em] uppercase leading-relaxed">
+        Vença Pessoas. Esqueça Robôs.<br />
+        <span className="text-[#10b981]/80">O lucro real da arena P2P está aqui.</span>
+    </p>
+
+    {/* ... O RESTO DO SEU FORMULÁRIO JÁ EXISTENTE (inputs, captcha, botões) ... */}
+    <div className="space-y-4 text-left">
+
+
+
+
+
+    
     
     <div key={pool.id} className="p-10 bg-[#1e293b] rounded-[40px] border border-gray-800 relative shadow-xl overflow-hidden group">
       <div className="flex items-center gap-3 mb-6">
