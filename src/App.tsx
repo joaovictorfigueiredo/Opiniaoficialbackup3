@@ -1273,7 +1273,7 @@ async function handleResetPassword() {
           {poolsFiltradas.map((pool: any) => {
 
   const { totalPote, opcoes } = calcularDadosPool(pool)
-  const link = `${window.location.origin}/?poolId=${pool.id}`
+  
   return (    
 
     
