@@ -62,7 +62,7 @@ const [tipoChavePix, setTipoChavePix] = useState('CPF');
   const [perfilAberto, setPerfilAberto] = useState<any>(null);
   const [poolsDoCriador, setPoolsDoCriador] = useState<any[]>([]);
 
-//const [showLogin, setShowLogin] = useState(false)
+const [showLogin, setShowLogin] = useState(false)
   
   const [ranking, setRanking] = useState([]);
   const [justificativa, setJustificativa] = useState('');
@@ -977,7 +977,7 @@ async function handleResetPassword() {
 
   
   
-/*if (!user) {
+if (!user && showLogin) {
   return (
     
 
@@ -1612,13 +1612,14 @@ async function handleResetPassword() {
               </div>
 
               <div className="flex flex-col gap-2">
-                <button onClick={() => setIsModalTransacaoOpen('deposito')}onClick={() => {
+               <button 
+onClick={() => {
   if (!user) {
     setShowLogin(true)
     return
   }
   setIsModalTransacaoOpen('deposito')
-}} className="w-full bg-[#10b981] text-[#0f172a] text-[10px] font-black py-3 rounded-xl uppercase">Depositar</button>
+}}
                 <button onClick={() => setIsModalTransacaoOpen('saque')} className="w-full bg-gray-800 text-white text-[10px] font-black py-3 rounded-xl uppercase">Sacar</button>
               </div>
 
