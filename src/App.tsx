@@ -136,24 +136,27 @@ const dispararDenuncia = (poolId: string) => {
 const [textoDenuncia, setTextoDenuncia] = useState('');
 
 
-// ================== LINK COMPARTILHADO ==================
+// ================== linkpool COMPARTILHADO ==================
 useEffect(() => {
-  try {
-    const params = new URLSearchParams(window.location.search);
-    const poolId = params.get("poolId");
+  const carregar = async () => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const poolId = params.get("poolId");
 
-    if (poolId && poolId.length > 0) {
-      buscarPoolPorId(poolId);
-    } else {
-      buscarPools();
+      if (poolId !== null && poolId !== "") {
+        await buscarPoolPorId(poolId);
+      } else {
+        await buscarPools();
+      }
+
+    } catch (e) {
+      console.error("Erro ao carregar pools:", e);
+      await buscarPools();
     }
+  };
 
-  } catch (error) {
-    console.error("Erro ao ler link:", error);
-    buscarPools(); // evita tela branca
-  }
+  carregar();
 }, []);
-
 
 
 
