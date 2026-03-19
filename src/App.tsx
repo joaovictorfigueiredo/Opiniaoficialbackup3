@@ -1313,20 +1313,13 @@ async function handleResetPassword() {
               Denunciar
             </button>
 
-            {/* BOTÃO DE COMPARTILHAR CORRIGIDO */}
-          <button 
-  onClick={() => {
-    const link = `${window.location.origin}/?poolId=${pool.id}`;
-    navigator.clipboard.writeText(link);
-    toast.success("Link da pool copiado! 🚀");
-    window.open(link, '_blank'); // abre a pool em nova aba
-  }}
->
-  Compartilhar
-</button>
-
-          
-            
+    {/* Estrelinha de favoritos */}
+  <button
+    onClick={() => toggleFavorito(usuario.id)}
+    className={`ml-2 text-yellow-400 ${favoritos.includes(usuario.id) ? 'opacity-100' : 'opacity-40'}`}
+  >
+    ★
+  </button>      
             <span className="text-[7px] text-gray-800 font-mono uppercase tracking-widest opacity-50">
               #{pool.id.slice(0, 8)}
             </span>
