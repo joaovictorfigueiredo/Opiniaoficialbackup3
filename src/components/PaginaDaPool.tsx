@@ -1,7 +1,7 @@
 import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import ContadorRegressivo from "./ContadorRegressivo";
-import { supabase } from './lib/supabase
+import { supabase } from '../lib/supabase';
 
 type Props = {
   pool: any
