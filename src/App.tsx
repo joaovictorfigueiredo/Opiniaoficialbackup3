@@ -977,7 +977,7 @@ async function handleResetPassword() {
 
   
   
-if (!user) {
+/*if (!user) {
   return (
     
 
