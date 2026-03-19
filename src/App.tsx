@@ -1617,7 +1617,8 @@ if (!user) {
     setShowLogin(true)
     return
   }
-  setIsModalTransacaoOpen('deposito')
+  setIsModalTransacaoOpen('deposito')className="w-full bg-green-600 text-white text-lg font-bold p-4 rounded-xl"
+>
 }}>
   Depositar
 </button>
