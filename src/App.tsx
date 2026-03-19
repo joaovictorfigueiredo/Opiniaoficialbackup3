@@ -1656,10 +1656,6 @@ if (!user) {
                       </span>
                     </div>
                   ))}
-
-                  <button onClick={() => setPoolDoLink(pool)}>
-  Testar Link da Pool
-</button>
                 </div>
               </div>
             </div>
