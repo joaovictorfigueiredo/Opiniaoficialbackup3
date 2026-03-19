@@ -206,6 +206,38 @@ html, body {
 .coin:nth-child(10) { left: 88%; animation-duration: 5.5s; animation-delay: 1.5s; }
 
 
+/* Container principal do fundo */
+.parallax-bg-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 110%; /* Um pouco maior para não mostrar bordas no movimento */
+  height: 110%;
+  z-index: -1;
+  overflow: hidden;
+  background: #060912;
+}
 
+/* A imagem da plataforma em si */
+.parallax-dashboard {
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(to bottom, rgba(6, 9, 18, 0.7), rgba(6, 9, 18, 0.9)), 
+                    url('/opiniabackgroun.png'); /* Caminho da sua imagem */
+  background-size: cover;
+  background-position: center;
+  filter: blur(4px); /* Desfoque para dar profundidade */
+  transform: scale(1.1);
+  will-change: transform;
+  transition: transform 0.1s ease-out;
+}
+
+/* Ajuste específico para Celular (Mobile) */
+@media (max-width: 768px) {
+  .parallax-dashboard {
+    background-attachment: scroll; /* Melhora performance em mobile */
+    filter: blur(2px); /* Menos desfoque no celular */
+  }
+}
 
 
