@@ -14,6 +14,7 @@ import { FunctionsHttpError } from '@supabase/supabase-js';
 import { Turnstile } from '@marsidev/react-turnstile';
 import AtualizarSenha from './atualizar-senha';
 import { toast } from 'react-hot-toast';
+import PaginaDaPool from './PaginaDaPool';
 
 
 // --- TIPOS ---
@@ -151,7 +152,7 @@ useEffect(() => {
 }, [usuarioDestaque, abaAtiva]); 
 // Toda vez que o filtro de usuário mudar ou você trocar de aba, ele busca de novo.
 
-
+const [poolDoLink, setPoolDoLink] = useState<any>(null);
 
   /*ticket*/
   useEffect(() => {
@@ -1111,8 +1112,20 @@ if (!user) {
 }
 
 
-  
+  if (poolDoLink) {
   return (
+    <PaginaDaPool 
+      pool={poolDoLink}
+      agora={new Date()}
+      calcularDadosPool={calcularDadosPool} // Use a mesma função que você já tinha
+      aoClicarEmApostar={(opcao, pool) => {
+        // Aqui você abre o seu modal de login ou redireciona para depósito
+        setSelectedOption(opcao);
+        setSelectedPool(pool);
+        setIsModalOpen(true);
+      }}
+      voltarParaOFeed={() => setPoolDoLink(null)} // Limpa o estado e volta pro feed
+    />
 
 
 
@@ -1683,7 +1696,7 @@ if (!user) {
       setAbaAtiva('explorar');
     }}
   />
-)}
+)}}
 
       {/* ----------------------------- */}
       {/* MODAL DE CONFIRMAÇÃO DE ENCERRAMENTO */}
