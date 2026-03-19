@@ -119,7 +119,7 @@ const dispararDenuncia = (poolId: string) => {
 };
 const [textoDenuncia, setTextoDenuncia] = useState('');
 
-
+const [poolDoLink, setPoolDoLink] = useState<any>(null);
 
   
   // Isso vai fazer o React "acordar" a cada segundo e re-checar os botões
@@ -152,7 +152,7 @@ useEffect(() => {
 }, [usuarioDestaque, abaAtiva]); 
 // Toda vez que o filtro de usuário mudar ou você trocar de aba, ele busca de novo.
 
-const [poolDoLink, setPoolDoLink] = useState<any>(null);
+
 
   /*ticket*/
   useEffect(() => {
