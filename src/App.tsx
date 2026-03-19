@@ -139,17 +139,25 @@ const handleVerPoolsAtivas = (id: string, nick: string) => {
 }
 
 
-// Este código lê a URL quando o site carrega
+//  COLE ESTE url:
 useEffect(() => {
-  const path = window.location.pathname; // Pega o que vem depois da barra /
-  
-  // Se a URL for algo como /p/id-da-pool
-  if (path.startsWith('/p/')) {
-    const idPool = path.replace('/p/', '');
-    if (idPool) {
-      buscarPoolEspecifica(idPool);
+  const carregarRotaEstrategica = () => {
+    const path = window.location.pathname;
+    
+    if (path.includes('/p/')) {
+      const partes = path.split('/p/');
+      const idPool = partes[1]?.split('/')[0];
+      
+      if (idPool && idPool.length > 10) {
+        buscarPoolEspecifica(idPool);
+      }
     }
-  }
+  };
+
+  carregarRotaEstrategica();
+  
+  window.addEventListener('popstate', carregarRotaEstrategica);
+  return () => window.removeEventListener('popstate', carregarRotaEstrategica);
 }, []);
 
   
