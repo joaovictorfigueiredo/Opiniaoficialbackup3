@@ -120,7 +120,7 @@ const [modo, setModo] = useState<'login' | 'recuperar'>('login');
 
 
 //linkpool
-  const link = `${window.location.origin}/?poolId=${pool.id}`
+  
 //linkpool
 
 
