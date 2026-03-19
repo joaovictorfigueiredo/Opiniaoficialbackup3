@@ -138,15 +138,19 @@ const [textoDenuncia, setTextoDenuncia] = useState('');
 
 // ================== LINK COMPARTILHADO ==================
 useEffect(() => {
-  const path = window.location.pathname;
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const poolId = params.get("poolId");
 
-  // exemplo: site.com/quem-vai-ganhar-o-jogo-1700000000000
-  const slug = path.replace("/", "");
+    if (poolId && poolId.length > 0) {
+      buscarPoolPorId(poolId);
+    } else {
+      buscarPools();
+    }
 
-  if (slug) {
-    buscarPoolPorSlug(slug);
-  } else {
-    buscarPools();
+  } catch (error) {
+    console.error("Erro ao ler link:", error);
+    buscarPools(); // evita tela branca
   }
 }, []);
 
