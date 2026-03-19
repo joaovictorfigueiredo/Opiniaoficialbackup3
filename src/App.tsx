@@ -1008,6 +1008,7 @@ if (!user) {
       
       <div className="max-w-md w-full bg-[#1e293b] p-8 rounded-3xl border border-gray-800 shadow-2xl">
         <h1 className="text-4xl font-black mb-8 text-center text-[#10b981]">Opinia</h1>
+        <h3 className="text-4xl font-black mb-8 text-center text-[#10b981]">Uma plataforma onde sua opinião pode virar dinheiro.</h3>
 
         
         
