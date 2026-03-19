@@ -139,26 +139,22 @@ const handleVerPoolsAtivas = (id: string, nick: string) => {
 }
 
 
-//  COLE ESTE url:
 useEffect(() => {
-  const carregarRotaEstrategica = () => {
-    const path = window.location.pathname;
-    
-    if (path.includes('/p/')) {
-      const partes = path.split('/p/');
-      const idPool = partes[1]?.split('/')[0];
-      
-      if (idPool && idPool.length > 10) {
-        buscarPoolEspecifica(idPool);
-      }
-    }
-  };
+  // 1. Pega o ID da URL
+  const params = new URLSearchParams(window.location.search);
+  const poolIdViaLink = params.get('id');
 
-  carregarRotaEstrategica();
-  
-  window.addEventListener('popstate', carregarRotaEstrategica);
-  return () => window.removeEventListener('popstate', carregarRotaEstrategica);
-}, []);
+  if (poolIdViaLink && pools.length > 0) {
+    // 2. Filtra a lista para mostrar apenas essa pool
+    const poolEncontrada = pools.find(p => p.id === poolIdViaLink);
+    if (poolEncontrada) {
+      setPoolsFiltradas([poolEncontrada]);
+      // Opcional: faz scroll até ela
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+}, [pools]); // Executa sempre que as pools forem carregadas
+
 
   
   // Escuta mudanças na URL (útil se você navegar internamente)
@@ -1167,26 +1163,18 @@ if (!user) {
   } 
   // --- FIM DA CORREÇÃO (O código abaixo segue normal para o feed) ---
 
-const compartilharDesafio = (pool: any) => {
-  // A URL que o seu sistema agora reconhece
-  const urlLink = `https://opiniaoficial.com.br/p/${pool.id}`;
+const compartilharDesafio = (pool) => {
+  const url = `${window.location.origin}${window.location.pathname}?id=${pool.id}`;
   
-  // Mensagem personalizada para atrair o clique
-  const textoBase = `🔥 DESAFIO NO OPINIÃO OFICIAL!\n\n"${pool.title.toUpperCase()}"\n\nO pote atual está em R$ ${pool.totalPote || '0,00'}.\n\nE aí, qual seu palpite? Dê o seu aqui:`;
-  
-  const mensagemWhatsapp = encodeURIComponent(`${textoBase}\n${urlLink}`);
-  const whatsappUrl = `https://wa.me/?text=${mensagemWhatsapp}`;
-
-  // Tenta usar a função nativa de compartilhar do celular (mais moderno)
   if (navigator.share) {
     navigator.share({
       title: 'Desafio Opiniao Oficial',
-      text: textoBase,
-      url: urlLink,
-    }).catch(() => window.open(whatsappUrl, '_blank')); // Se der erro ou cancelar, abre o Zap
+      text: `Você aceita o desafio: ${pool.title}?`,
+      url: url,
+    });
   } else {
-    // Se for no PC ou navegador antigo, abre direto o WhatsApp
-    window.open(whatsappUrl, '_blank');
+    navigator.clipboard.writeText(url);
+    alert("Link de desafio copiado!");
   }
 };
   
