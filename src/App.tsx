@@ -62,7 +62,7 @@ const [tipoChavePix, setTipoChavePix] = useState('CPF');
   const [perfilAberto, setPerfilAberto] = useState<any>(null);
   const [poolsDoCriador, setPoolsDoCriador] = useState<any[]>([]);
 
-const [showLogin, setShowLogin] = useState(false)
+
   
   const [ranking, setRanking] = useState([]);
   const [justificativa, setJustificativa] = useState('');
@@ -977,7 +977,7 @@ async function handleResetPassword() {
 
   
   
-if (!user && showLogin) {
+if (!user) {
   return (
     
 
