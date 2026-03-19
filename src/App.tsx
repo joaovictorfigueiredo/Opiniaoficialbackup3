@@ -1716,7 +1716,7 @@ if (!user) {
       setAbaAtiva('explorar');
     }}
   />
-)}}
+)}
 
       {/* ----------------------------- */}
       {/* MODAL DE CONFIRMAÇÃO DE ENCERRAMENTO */}
