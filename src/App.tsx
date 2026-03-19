@@ -135,6 +135,24 @@ const dispararDenuncia = (poolId: string) => {
 };
 const [textoDenuncia, setTextoDenuncia] = useState('');
 
+
+// ================== LINK COMPARTILHADO ==================
+useEffect(() => {
+  const path = window.location.pathname;
+
+  // exemplo: site.com/quem-vai-ganhar-o-jogo-1700000000000
+  const slug = path.replace("/", "");
+
+  if (slug) {
+    buscarPoolPorSlug(slug);
+  } else {
+    buscarPools();
+  }
+}, []);
+
+
+
+
   
   // Isso vai fazer o React "acordar" a cada segundo e re-checar os botões
   useEffect(() => {
