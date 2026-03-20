@@ -131,7 +131,7 @@ html, body {
 #root > div.min-h-screen {
   position: relative;
   overflow: hidden;
-  background-color: #060912 !important; /* Fundo bem escuro para destacar o dinheiro */
+  background-color: #15191d !important; /* Fundo bem escuro para destacar o dinheiro */
   min-height: 100vh;
   width: 100%;
 }
@@ -215,7 +215,7 @@ html, body {
   height: 110%;
   z-index: -1;
   overflow: hidden;
-  background: #060912;
+  background: #15191d;
 }
 
 /* A imagem da plataforma em si */
