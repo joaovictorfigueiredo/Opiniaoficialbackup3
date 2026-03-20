@@ -975,9 +975,9 @@ async function handleResetPassword() {
     return valorNum * multiplicador
   }
 
-  const  = filtroAtivo === 'Todos'
-    ? [...pools].sort((a, b) => calcularDadosPool(b).totalPote - calcularDadosPool(a).totalPote)
-    : pools.filter(p => p.category === filtroAtivo)
+  //const  = filtroAtivo === 'Todos'
+  //  ? [...pools].sort((a, b) => calcularDadosPool(b).totalPote - calcularDadosPool(a).totalPote)
+  //  : pools.filter(p => p.category === filtroAtivo)
 
 
 // 1. COLE A LÓGICA AQUI (FORA DO HTML)
