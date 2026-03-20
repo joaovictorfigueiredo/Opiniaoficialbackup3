@@ -136,6 +136,24 @@ const handleVerPoolsAtivas = (id: string, nick: string) => {
 }
 
 
+
+
+ const [termoBusca, setTermoBusca] = useState('');
+
+const poolsFiltradas = pools.filter(pool => {
+  const busca = termoBusca.toLowerCase();
+  return (
+    // 1. Busca pelo Título (no seu código era .title)
+    pool.title?.toLowerCase().includes(busca) || 
+    
+    // 2. Busca pela Categoria
+    pool.category?.toLowerCase().includes(busca) ||
+    
+    // 3. Busca pelo Nickname do Criador (profiles.nickname)
+    pool.profiles?.nickname?.toLowerCase().includes(busca)
+  );
+});
+
   
   // Escuta mudanças na URL (útil se você navegar internamente)
   useEffect(() => {
@@ -971,7 +989,7 @@ async function handleResetPassword() {
     return valorNum * multiplicador
   }
 
-  const poolsFiltradas = filtroAtivo === 'Todos'
+  const  = filtroAtivo === 'Todos'
     ? [...pools].sort((a, b) => calcularDadosPool(b).totalPote - calcularDadosPool(a).totalPote)
     : pools.filter(p => p.category === filtroAtivo)
 
@@ -1155,6 +1173,10 @@ if (!user) {
         
 
 
+
+
+        
+
         {/* COLUNA PRINCIPAL */}
 <div className="flex-1 space-y-10">
   <div className="flex justify-between items-center">
@@ -1333,6 +1355,37 @@ if (!user) {
   {isActionLoading ? 'PUBLICANDO...' : 'PUBLICAR AGORA'}
 </button>
           </div>
+
+
+{/* BARRA DE BUSCA ESTILIZADA */}
+<div className="relative max-w-xl mx-auto mb-10 group">
+  <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
+    <span className="text-gray-500 group-focus-within:text-[#10b981] transition-colors">🔍</span>
+  </div>
+  <input
+    type="text"
+    placeholder="Buscar por título ou usuário..."
+    value={termoBusca}
+    onChange={(e) => setTermoBusca(e.target.value)}
+    className="w-full bg-[#1e293b]/80 border border-gray-800 text-white pl-14 pr-6 py-4 rounded-[25px] focus:outline-none focus:border-[#10b981] focus:ring-1 focus:ring-[#10b981] transition-all placeholder:text-gray-600 font-bold italic"
+  />
+  
+  {/* Botão de limpar busca (aparece só quando tem texto) */}
+  {termoBusca && (
+    <button 
+      onClick={() => setTermoBusca('')}
+      className="absolute inset-y-0 right-5 text-gray-500 hover:text-white"
+    >
+      ✕
+    </button>
+  )}
+</div>
+
+
+
+
+
+  
 
           <div className="space-y-10">
 
