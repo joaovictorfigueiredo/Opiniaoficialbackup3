@@ -997,6 +997,12 @@ if (!user) {
     <div className="coin"></div>
     <div className="coin"></div>
     <div className="coin"></div>
+   <div 
+  className="coin" 
+  style={{
+    backgroundImage: "url('https://i.imgur.com/b1g4E5Z.png')"
+  }}
+></div>
   </div>
 
 
