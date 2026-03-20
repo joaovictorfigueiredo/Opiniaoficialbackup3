@@ -982,9 +982,7 @@ async function handleResetPassword() {
 if (!user) {
   return (
      
-    <div className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center p-6" style="
-    background-image: url(https://i.imgur.com/b1g4E5Z.png);
-">
+    <div className="min-h-screen bg-[#0f172a] text-white flex items-center justify-center p-6">
     
      
 {/* 2. ESTE É O NOVO CONTÊINER DA CHUVA DE DINHEIRO (5 notas, 5 moedas) */}
