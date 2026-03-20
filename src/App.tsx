@@ -976,8 +976,8 @@ async function handleResetPassword() {
   }
 
   //const  = filtroAtivo === 'Todos'
-  //  ? [...pools].sort((a, b) => calcularDadosPool(b).totalPote - calcularDadosPool(a).totalPote)
-  //  : pools.filter(p => p.category === filtroAtivo)
+ // ? [...pools].sort((a, b) => calcularDadosPool(b).totalPote - calcularDadosPool(a).totalPote)
+  //: pools.filter(p => p.category === filtroAtivo)
 
 
 // 1. COLE A LÓGICA AQUI (FORA DO HTML)
@@ -1363,11 +1363,12 @@ if (!user) {
   
 
           <div className="space-y-10">
- {/* BARRA DE BUSCA ESTILIZADA */}
-<div className="relative max-w-xl mx-auto mb-10 group">
+{/* BARRA DE BUSCA ESTILIZADA COM RESULTADOS RÁPIDOS */}
+<div className="relative max-w-xl mx-auto mb-10 group z-[100]">
   <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
     <span className="text-gray-500 group-focus-within:text-[#10b981] transition-colors">🔍</span>
   </div>
+  
   <input
     type="text"
     placeholder="Buscar por título ou usuário..."
@@ -1375,19 +1376,58 @@ if (!user) {
     onChange={(e) => setTermoBusca(e.target.value)}
     className="w-full bg-[#1e293b]/80 border border-gray-800 text-white pl-14 pr-6 py-4 rounded-[25px] focus:outline-none focus:border-[#10b981] focus:ring-1 focus:ring-[#10b981] transition-all placeholder:text-gray-600 font-bold italic"
   />
-  
-  {/* Botão de limpar busca (aparece só quando tem texto) */}
+
   {termoBusca && (
     <button 
       onClick={() => setTermoBusca('')}
-      className="absolute inset-y-0 right-5 text-gray-500 hover:text-white"
+      className="absolute inset-y-0 right-5 text-gray-500 hover:text-white px-2"
     >
       ✕
     </button>
   )}
-</div>
 
-           
+  {/* JANELINHA DE RESULTADOS (Aparece apenas se houver busca) */}
+  {termoBusca.trim() !== '' && (
+    <div className="absolute w-full mt-2 bg-[#1e293b] border border-gray-700 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+      {pools
+        .filter(p => 
+          p.title?.toLowerCase().includes(termoBusca.toLowerCase()) || 
+          p.profiles?.nickname?.toLowerCase().includes(termoBusca.toLowerCase())
+        )
+        .slice(0, 5) // Mostra apenas os 5 primeiros resultados
+        .map(pool => (
+          <button
+            key={pool.id}
+            onClick={() => {
+              // Faz a tela descer até o card da pool
+              document.getElementById(`pool-${pool.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              setTermoBusca(''); // Limpa a busca ao selecionar
+            }}
+            className="w-full flex items-center gap-4 p-4 hover:bg-[#10b981]/10 border-b border-gray-800 last:border-0 transition-colors text-left group/item"
+          >
+            <div className="w-10 h-10 bg-[#10b981] rounded-full flex items-center justify-center font-black text-[#0f172a] text-[10px]">
+              {(pool.profiles?.nickname || 'U').substring(0, 2).toUpperCase()}
+            </div>
+            <div className="flex-1">
+              <p className="text-white font-bold text-sm group-hover/item:text-[#10b981] transition-colors">{pool.title}</p>
+              <p className="text-gray-500 text-[10px] uppercase">@{pool.profiles?.nickname || 'usuario'}</p>
+            </div>
+            <span className="text-gray-600 text-[10px]">#ir para pool</span>
+          </button>
+        ))}
+
+      {/* Caso não encontre nada */}
+      {pools.filter(p => 
+          p.title?.toLowerCase().includes(termoBusca.toLowerCase()) || 
+          p.profiles?.nickname?.toLowerCase().includes(termoBusca.toLowerCase())
+        ).length === 0 && (
+          <div className="p-6 text-center text-gray-500 italic text-sm">
+            Nenhuma pool encontrada para "{termoBusca}"
+          </div>
+      )}
+    </div>
+  )}
+</div>  
 
 
           {poolsFiltradas.map((pool: any) => {
@@ -1398,7 +1438,7 @@ if (!user) {
    
     
     
-    <div key={pool.id} className="p-10 bg-[#1e293b] rounded-[40px] border border-gray-800 relative shadow-xl overflow-hidden group">
+    <div key={pool.id} id={`pool-${pool.id}`} className="p-10 bg-[#1e293b] rounded-[40px] border border-gray-800 relative shadow-xl overflow-hidden group">
       <div className="flex items-center gap-3 mb-6">
         {/* AVATAR */}
         <div
