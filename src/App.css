@@ -205,6 +205,8 @@ html, body {
 .coin:nth-child(9) { left: 70%; animation-duration: 7s; animation-delay: 4s; opacity: 0.6; }
 .coin:nth-child(10) { left: 88%; animation-duration: 5.5s; animation-delay: 1.5s; }
 
+.opinia:nth-child(10) { left: 88%; animation-duration: 5.5s; animation-delay: 1.5s; }
+
 
 /* Container principal do fundo */
 .parallax-bg-container {
