@@ -1136,7 +1136,9 @@ if (!user) {
   
   // Se não tiver pool no link, ele pula o código acima e executa o return abaixo normalmente
   return (
-    <div className="min-h-screen bg-[#0f172a] text-white p-4 md:p-8 font-sans">
+    <div className="min-h-screen bg-[#0f172a] text-white p-4 md:p-8 font-sans" style="
+    background-image: url(https://i.imgur.com/b1g4E5Z.png);
+">
       
       <div className=" mx-auto flex flex-col lg:flex-row gap-10">
         
