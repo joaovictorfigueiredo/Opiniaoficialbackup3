@@ -1048,11 +1048,31 @@ if (!user) {
 </div>
 
               <button 
-                onClick={handleLogin} 
-                className="w-full bg-[#10b981] p-4 rounded-xl font-black text-[#0f172a] hover:opacity-90 transition-all"
-              >
-                ENTRAR NO PAINEL
-              </button>
+  onClick={handleLogin}
+  className="
+    w-full 
+    bg-gradient-to-r from-emerald-500 to-green-400
+    p-4 
+    rounded-2xl 
+    font-extrabold 
+    text-[#0f172a] 
+    tracking-wide
+    shadow-lg shadow-emerald-500/30
+    hover:scale-[1.02]
+    hover:shadow-xl hover:shadow-emerald-500/50
+    active:scale-[0.98]
+    transition-all duration-300
+    relative
+    overflow-hidden
+    before:absolute before:inset-0 
+    before:bg-white/10 
+    before:opacity-0 
+    hover:before:opacity-100 
+    before:transition
+  "
+>
+  ENTRAR NO PAINEL
+</button>
               
               <button 
                 onClick={handleSignUp} 
