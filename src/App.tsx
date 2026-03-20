@@ -1357,7 +1357,16 @@ if (!user) {
           </div>
 
 
-{/* BARRA DE BUSCA ESTILIZADA */}
+
+
+
+
+
+  
+
+          <div className="space-y-10">
+
+            {/* BARRA DE BUSCA ESTILIZADA */}
 <div className="relative max-w-xl mx-auto mb-10 group">
   <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
     <span className="text-gray-500 group-focus-within:text-[#10b981] transition-colors">🔍</span>
@@ -1381,13 +1390,6 @@ if (!user) {
   )}
 </div>
 
-
-
-
-
-  
-
-          <div className="space-y-10">
 
           {poolsFiltradas.map((pool: any) => {
 
