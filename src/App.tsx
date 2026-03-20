@@ -1354,18 +1354,7 @@ if (!user) {
               Denunciar
             </button>
 
-            <button
-  onClick={() => {
-    navigator.clipboard.writeText(pool.id);
-    alert("ID Copiado! Mande para seu amigo colar na busca.");
-  }}
-  className="flex items-center gap-2 bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-lg border border-white/5 transition-all group/id"
->
-  <span className="text-[7px] text-gray-500 font-mono uppercase tracking-widest group-hover/id:text-[#10b981]">
-    #{pool.id.slice(0, 8)}
-  </span>
-  <Copy size={10} className="text-gray-700 group-hover/id:text-[#10b981]" />
-</button>
+            
       
             <span className="text-[7px] text-gray-800 font-mono uppercase tracking-widest opacity-50">
               #{pool.id.slice(0, 8)}
