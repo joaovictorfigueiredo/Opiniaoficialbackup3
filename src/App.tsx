@@ -59,7 +59,7 @@ const [tipoChavePix, setTipoChavePix] = useState('CPF');
   const requestId = crypto.randomUUID();
   const [valorPendente, setValorPendente] = useState(0);
   const [temContestacao, setTemContestacao] = useState(false);
-  const [abaAtiva, setAbaAtiva] = useState('Explorar');
+  const [abaAtiva, setAbaAtiva] = useState('ativas');
   const [perfilAberto, setPerfilAberto] = useState<any>(null);
   const [poolsDoCriador, setPoolsDoCriador] = useState<any[]>([]);
 
