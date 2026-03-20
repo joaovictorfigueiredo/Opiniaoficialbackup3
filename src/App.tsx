@@ -1295,7 +1295,6 @@ if (!user) {
 <button
   onClick={() => {
   if (!user) {
-    setShowLogin(true)
     return
   }
   criarPool()
@@ -1483,7 +1482,7 @@ if (!user) {
                               disabled={estaBloqueado}
                               onClick={() => {
                                 if (!user) {
-                                  setShowLogin(true)
+                                  
                                   return
                                 }
                                 setSelectedOption(option);
