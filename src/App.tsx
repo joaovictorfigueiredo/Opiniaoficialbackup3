@@ -134,26 +134,12 @@ const handleVerPoolsAtivas = (id: string, nick: string) => {
   // Aqui você usa o nome novo do estado
   setUsuarioDestaque({ id, nickname: nick });
 }
+const [termoBusca, setTermoBusca] = useState('');
 
 
 
 
- const [termoBusca, setTermoBusca] = useState('');
-
-const poolsFiltradas = pools.filter(pool => {
-  const busca = termoBusca.toLowerCase();
-  return (
-    // 1. Busca pelo Título (no seu código era .title)
-    pool.title?.toLowerCase().includes(busca) || 
-    
-    // 2. Busca pela Categoria
-    pool.category?.toLowerCase().includes(busca) ||
-    
-    // 3. Busca pelo Nickname do Criador (profiles.nickname)
-    pool.profiles?.nickname?.toLowerCase().includes(busca)
-  );
-});
-
+  
   
   // Escuta mudanças na URL (útil se você navegar internamente)
   useEffect(() => {
@@ -994,7 +980,19 @@ async function handleResetPassword() {
     : pools.filter(p => p.category === filtroAtivo)
 
 
+// 1. COLE A LÓGICA AQUI (FORA DO HTML)
+const baseDaLista = filtroAtivo === 'Todos'
+  ? [...pools].sort((a, b) => calcularDadosPool(b).totalPote - calcularDadosPool(a).totalPote)
+  : pools.filter(p => p.category === filtroAtivo);
 
+const poolsFiltradas = baseDaLista.filter(p => {
+  const busca = termoBusca.toLowerCase().trim();
+  if (!busca) return true;
+  return (
+    p.title?.toLowerCase().includes(busca) || 
+    p.profiles?.nickname?.toLowerCase().includes(busca)
+  );
+});
   
   
 if (!user) {
@@ -1358,15 +1356,14 @@ if (!user) {
 
 
 
-
+ 
 
 
 
   
 
           <div className="space-y-10">
-
-            {/* BARRA DE BUSCA ESTILIZADA */}
+ {/* BARRA DE BUSCA ESTILIZADA */}
 <div className="relative max-w-xl mx-auto mb-10 group">
   <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
     <span className="text-gray-500 group-focus-within:text-[#10b981] transition-colors">🔍</span>
@@ -1390,13 +1387,15 @@ if (!user) {
   )}
 </div>
 
+           
+
 
           {poolsFiltradas.map((pool: any) => {
-
+  
   const { totalPote, opcoes } = calcularDadosPool(pool)
   
-  return (    
-
+  return (  
+   
     
     
     <div key={pool.id} className="p-10 bg-[#1e293b] rounded-[40px] border border-gray-800 relative shadow-xl overflow-hidden group">
